@@ -23,6 +23,7 @@ Phiên bản đầu dùng riêng cho 2 người. Thiết kế để sau này m�
 - Đăng nhập/đăng xuất bằng username và password.
 - Phải có cách sửa mật khẩu khi quên: người dùng tự sửa hoặc tài khoản admin sửa giúp.
 - Lưu tiến độ và lịch sử học.
+- Công nghệ (chốt ở giai đoạn 0): web/ dùng Next.js (App Router, TypeScript, Tailwind), Node 26 LTS. worker/ dùng Python với venv và requirements.txt. Triển khai: Vercel nối với GitHub (Root Directory = web), tự deploy khi push.
 
 ## Hoãn lại (CHƯA làm ở phiên bản đầu)
 - Kiểm tra phát âm và ngữ điệu của người dùng so với câu được chọn (ngữ điệu so với âm thanh gốc của video).
