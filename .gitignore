@@ -1,0 +1,28 @@
+# Khóa và biến môi trường (KHÔNG đưa lên GitHub)
+.env
+.env.*
+!.env.example
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# Web (Next.js)
+node_modules/
+.next/
+.vercel/
+dist/
+build/
+
+# Python (worker)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# File tạm và media
+tmp/
+temp/
+*.log
+Thumbs.db
