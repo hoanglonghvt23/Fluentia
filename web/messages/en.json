@@ -1,0 +1,28 @@
+{
+  "app": { "tagline": "English practice: Dictation and Shadowing" },
+  "nav": { "logout": "Log out", "admin": "Admin", "home": "Home" },
+  "login": {
+    "title": "Log in",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Log in",
+    "invalid": "Wrong username or password.",
+    "forgot": "Forgot your password? Ask an admin to reset it for you."
+  },
+  "home": { "hello": "Hello, {username}", "role_admin": "Administrator", "role_user": "User" },
+  "admin": {
+    "title": "User management",
+    "create": "Create account",
+    "reset": "Reset password",
+    "newPassword": "New password",
+    "users": "Accounts",
+    "save": "Save",
+    "hint": "Username: 3-20 characters, lowercase letters, digits, underscore. Password: at least 8 characters.",
+    "ok_created": "Account created.",
+    "ok_reset": "Password reset.",
+    "err_username": "Invalid username.",
+    "err_password": "Password too short (minimum 8 characters).",
+    "err_exists": "Username already exists.",
+    "err_failed": "Action failed. Try again later."
+  }
+}
