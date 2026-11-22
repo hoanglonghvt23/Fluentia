@@ -69,9 +69,9 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt }: { lessonId
     if (autoplay) play(sentences[n], settings, settings.pause);
   };
 
-  const input = "rounded border border-zinc-300 bg-transparent px-2 py-1 dark:border-zinc-700";
-  const btn = "rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700";
-  const primary = "rounded bg-zinc-900 px-4 py-2 text-white dark:bg-zinc-100 dark:text-zinc-900";
+  const input = "field !w-24";
+  const btn = "btn";
+  const primary = "btn btn-primary";
 
   if (!s) return <p>{t("empty")}</p>;
 
@@ -79,7 +79,7 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt }: { lessonId
     <div className="flex flex-col gap-4">
       <audio ref={audio} src={audioUrl} preload="auto" />
 
-      <details className="rounded border border-zinc-200 p-3 text-sm dark:border-zinc-800">
+      <details className="card text-sm">
         <summary className="cursor-pointer">{t("settings")}</summary>
         <div className="mt-3 flex flex-wrap gap-4">
           <label className="flex flex-col gap-1">{t("speed")}: {settings.speed}x
@@ -94,7 +94,7 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt }: { lessonId
         </div>
       </details>
 
-      <p className="text-sm text-zinc-500">{t("progress", { n: i + 1, total: sentences.length })}</p>
+      <p className="muted text-sm">{t("progress", { n: i + 1, total: sentences.length })}</p>
 
       <div className="flex flex-wrap gap-2">
         <button className={primary} onClick={() => play(s, settings)} disabled={playing}>▶ {t("play")}</button>
@@ -109,24 +109,20 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt }: { lessonId
         placeholder={t("placeholder")}
         autoCapitalize="none"
         spellCheck={false}
-        className={`${input} w-full text-lg`}
+        className="field text-lg"
       />
 
       {!result ? (
         <button className={primary} onClick={check}>{t("check")}</button>
       ) : (
-        <div className="rounded border border-zinc-200 p-3 dark:border-zinc-800">
+        <div className="card">
           <p className="mb-2 font-medium">{t("score", { pct: Math.round(result.score * 100) })}</p>
           <p className="mb-2 leading-relaxed">
             {result.tokens.map((tk, k) => (
-              <span key={k} className={
-                tk.status === "ok" ? "mr-1" :
-                tk.status === "missing" ? "mr-1 rounded bg-amber-200 px-1 text-black" :
-                "mr-1 rounded bg-red-200 px-1 text-black line-through"
-              }>{tk.word}</span>
+              <span key={k} className={`mr-1 ${tk.status === "missing" ? "mark-missing" : tk.status === "extra" ? "mark-extra" : ""}`}>{tk.word}</span>
             ))}
           </p>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">{s.text}</p>
+          <p className="muted text-sm">{s.text}</p>
         </div>
       )}
 

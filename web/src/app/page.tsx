@@ -15,23 +15,23 @@ export default async function Home() {
   const busy = lessons?.some((l) => l.status === "queued" || l.status === "processing");
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
+    <main className="page">
       {busy && <AutoRefresh />}
-      <div className="mb-6 flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold">{t("hello", { username: me.username })}</h1>
-        <Link href="/lessons/new" className="rounded bg-zinc-900 px-4 py-2 text-sm text-white dark:bg-zinc-100 dark:text-zinc-900">
-          {t("newLesson")}
-        </Link>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <h1>{t("hello", { username: me.username })}</h1>
+        <Link href="/lessons/new" className="btn btn-primary">{t("newLesson")}</Link>
       </div>
       {!lessons?.length ? (
-        <p className="text-zinc-600 dark:text-zinc-400">{t("empty")}</p>
+        <p className="muted">{t("empty")}</p>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-3">
           {lessons.map((l) => (
             <li key={l.id}>
-              <Link href={`/lessons/${l.id}`} className="flex items-center justify-between gap-3 rounded border border-zinc-200 p-3 dark:border-zinc-800">
+              <Link href={`/lessons/${l.id}`} className="card card-link flex items-center justify-between gap-3">
                 <span className="font-medium">{l.title}</span>
-                <span className="text-xs text-zinc-500">{t(`status.${l.status}`)}</span>
+                <span className={`chip ${l.status === "ready" ? "chip-ready" : l.status === "error" ? "chip-error" : ""}`}>
+                  {t(`status.${l.status}`)}
+                </span>
               </Link>
             </li>
           ))}

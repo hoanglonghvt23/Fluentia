@@ -1,26 +1,117 @@
 @import "tailwindcss";
 
+/* Fluteria: tối giản, ấm áp. Nền kem, chữ nâu đậm, điểm nhấn đất nung. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fbf7f0;
+  --foreground: #2a2420;
+  --surface: #fffdf9;
+  --muted: #6f645b;
+  --line: #e6dccf;
+  --accent: #b5532d;
+  --accent-ink: #ffffff;
+  --accent-soft: #f6e4d9;
+  --ok: #3f6b42;
+  --ok-soft: #e1ecd9;
+  --bad: #a63a27;
+  --bad-soft: #f6dcd5;
+  --warn-soft: #f4e2a8;
+  --radius: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1b1714;
+    --foreground: #f1e9df;
+    --surface: #241f1b;
+    --muted: #aa9d90;
+    --line: #3a322b;
+    --accent: #e58f68;
+    --accent-ink: #1b1714;
+    --accent-soft: #3a2a22;
+    --ok: #9bc59d;
+    --ok-soft: #26362a;
+    --bad: #f0907c;
+    --bad-soft: #3d2420;
+    --warn-soft: #4a3f1c;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-heading);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading), Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+h1 { font-size: 1.875rem; }
+h2 { font-size: 1.25rem; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Bố cục trang: một cột, hai lề bằng nhau. */
+.page { width: 100%; max-width: 44rem; margin-inline: auto; padding: 2rem 1rem 3rem; flex: 1; }
+.page-narrow { max-width: 26rem; }
+
+.muted { color: var(--muted); }
+.msg-ok { color: var(--ok); }
+.msg-err { color: var(--bad); }
+
+/* Một cặp nút: chính (đất nung) và phụ (viền). Cao tối thiểu 44px để bấm tốt trên điện thoại. */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+  min-height: 44px; padding: 0 1.1rem;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface); color: var(--foreground);
+  font-size: 0.95rem; font-weight: 500; cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, transform 0.1s;
+}
+.btn:hover { background: var(--accent-soft); border-color: var(--accent); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { background: var(--accent); border-color: var(--accent); filter: brightness(1.08); }
+.btn-danger { color: var(--bad); }
+.btn-danger:hover { background: var(--bad-soft); border-color: var(--bad); }
+.btn-sm { min-height: 40px; padding: 0 0.9rem; font-size: 0.875rem; }
+
+/* Ô nhập. */
+.field {
+  width: 100%; min-height: 44px; padding: 0.55rem 0.8rem;
+  background: var(--surface); color: var(--foreground);
+  border: 1px solid var(--line); border-radius: 10px; font: inherit;
+}
+.field:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-soft); }
+.field:disabled { opacity: 0.7; }
+textarea.field { min-height: 0; }
+
+/* Một kiểu thẻ. */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; }
+.card-link { display: block; transition: transform 0.15s, border-color 0.15s; }
+.card-link:hover { transform: translateY(-2px); border-color: var(--accent); }
+
+.chip { display: inline-block; padding: 0.15rem 0.7rem; border-radius: 999px; font-size: 0.75rem; font-weight: 500;
+  background: var(--accent-soft); color: var(--foreground); }
+.chip-ready { background: var(--ok-soft); color: var(--ok); }
+.chip-error { background: var(--bad-soft); color: var(--bad); }
+
+/* So sánh chính tả: từ thiếu và từ thừa. */
+.mark-missing { background: var(--warn-soft); border-radius: 6px; padding: 0 0.3rem; }
+.mark-extra { background: var(--bad-soft); border-radius: 6px; padding: 0 0.3rem; text-decoration: line-through; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .card-link { transition: none; }
+  .btn:active, .card-link:hover { transform: none; }
 }

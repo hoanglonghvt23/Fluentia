@@ -16,7 +16,7 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
   if (!lesson) notFound();
 
   const waiting = lesson.status === "queued" || lesson.status === "processing";
-  const btn = "rounded border border-zinc-300 px-3 py-1.5 text-sm dark:border-zinc-700";
+  const btn = "btn";
   let body: React.ReactNode;
 
   if (lesson.status === "ready") {
@@ -30,7 +30,7 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
     body = (
       <>
         <div className="mb-6 flex flex-wrap gap-2">
-          <Link href={`/lessons/${id}/dictation`} className={btn}>{t("dictation")}</Link>
+          <Link href={`/lessons/${id}/dictation`} className="btn btn-primary">{t("dictation")}</Link>
           <Link href={`/lessons/${id}/shadowing`} className={btn}>{t("shadowing")}</Link>
         </div>
         <SentenceEditor
@@ -41,16 +41,16 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
       </>
     );
   } else if (lesson.status === "error") {
-    body = <p className="text-red-700 dark:text-red-400">{t("failed")}: {lesson.error}</p>;
+    body = <p className="msg-err">{t("failed")}: {lesson.error}</p>;
   } else {
-    body = <p className="text-zinc-600 dark:text-zinc-400">{t(lesson.status === "queued" ? "queued" : "processing")}</p>;
+    body = <p className="muted">{t(lesson.status === "queued" ? "queued" : "processing")}</p>;
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
+    <main className="page">
       {waiting && <AutoRefresh />}
       <div className="mb-4 flex items-start justify-between gap-3">
-        <h1 className="text-2xl font-semibold">{lesson.title}</h1>
+        <h1>{lesson.title}</h1>
         <DeleteLessonButton lessonId={id} />
       </div>
       {body}

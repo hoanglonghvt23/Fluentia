@@ -100,30 +100,30 @@ export function Shadowing({ lessonId, sentences, audioUrl, initialRecs }: { less
     setI(n);
   };
 
-  const btn = "rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700";
-  const primary = "rounded bg-zinc-900 px-4 py-2 text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900";
+  const btn = "btn";
+  const primary = "btn btn-primary";
   if (!s) return <p>{t("empty")}</p>;
   const mine = recs.filter((r) => r.sentence_id === s.id);
 
   return (
     <div className="flex flex-col gap-4">
       <audio ref={audio} src={audioUrl} preload="auto" />
-      <p className="text-sm text-zinc-500">{t("progress", { n: i + 1, total: sentences.length })}</p>
-      <p className="text-xl leading-relaxed">{s.text}</p>
+      <p className="muted text-sm">{t("progress", { n: i + 1, total: sentences.length })}</p>
+      <p className="card font-[family-name:var(--font-heading)] text-xl leading-relaxed">{s.text}</p>
 
       <div className="flex flex-wrap gap-2">
         <button className={primary} onClick={playOriginal}>▶ {t("playOriginal")}</button>
         {!recording ? (
           <button className={btn} onClick={startRec} disabled={!!draft}>● {t("record")}</button>
         ) : (
-          <button className="rounded bg-red-600 px-4 py-2 text-white" onClick={stopRec}>■ {t("stop")}</button>
+          <button className="btn btn-danger" onClick={stopRec}>■ {t("stop")}</button>
         )}
       </div>
 
-      {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
+      {error && <p className="msg-err text-sm">{error}</p>}
 
       {draft && (
-        <div className="flex flex-col gap-2 rounded border border-zinc-200 p-3 dark:border-zinc-800">
+        <div className="card flex flex-col gap-2">
           <audio src={draft.url} controls className="w-full" />
           <div className="flex gap-2">
             <button className={primary} onClick={save} disabled={busy}>{t("save")}</button>
@@ -137,8 +137,8 @@ export function Shadowing({ lessonId, sentences, audioUrl, initialRecs }: { less
           <h2 className="mb-2 text-sm font-medium">{t("saved")}</h2>
           <ul className="flex flex-col gap-2">
             {mine.map((r) => (
-              <li key={r.id} className="flex items-center justify-between gap-2 rounded border border-zinc-200 p-2 text-sm dark:border-zinc-800">
-                <span className="text-zinc-500">{new Date(r.created_at).toLocaleString()}</span>
+              <li key={r.id} className="card flex flex-wrap items-center justify-between gap-2 text-sm">
+                <span className="muted">{new Date(r.created_at).toLocaleString()}</span>
                 <span className="flex gap-2">
                   <button className={btn} onClick={() => playRec(r)}>▶ {t("listen")}</button>
                   <button className={btn} onClick={() => removeRec(r)}>{t("delete")}</button>

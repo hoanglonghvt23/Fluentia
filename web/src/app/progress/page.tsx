@@ -28,28 +28,28 @@ export default async function ProgressPage() {
   const title = new Map((lessons ?? []).map((l) => [l.id, l.title]));
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
-      <h1 className="mb-6 text-2xl font-semibold">{t("title")}</h1>
+    <main className="page">
+      <h1 className="mb-6">{t("title")}</h1>
 
-      <h2 className="mb-2 font-medium">{t("byLesson")}</h2>
-      <ul className="mb-8 flex flex-col gap-2">
+      <h2 className="mb-3">{t("byLesson")}</h2>
+      <ul className="mb-8 flex flex-col gap-3">
         {rows.map((r) => (
-          <li key={r.id} className="rounded border border-zinc-200 p-3 dark:border-zinc-800">
+          <li key={r.id} className="card">
             <Link href={`/lessons/${r.id}`} className="font-medium">{r.title}</Link>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            <p className="muted text-sm">
               {t("summary", { done: r.done, avg: r.avg === null ? "-" : Math.round(r.avg * 100), recs: r.recs })}
               {r.last && ` · ${new Date(r.last).toLocaleDateString()}`}
             </p>
           </li>
         ))}
-        {!rows.length && <li className="text-zinc-600 dark:text-zinc-400">{t("empty")}</li>}
+        {!rows.length && <li className="muted">{t("empty")}</li>}
       </ul>
 
-      <h2 className="mb-2 font-medium">{t("history")}</h2>
-      <ul className="flex flex-col gap-2">
+      <h2 className="mb-3">{t("history")}</h2>
+      <ul className="flex flex-col gap-3">
         {all.slice(0, 30).map((a, k) => (
-          <li key={k} className="rounded border border-zinc-200 p-3 text-sm dark:border-zinc-800">
-            <p className="flex justify-between gap-2 text-xs text-zinc-500">
+          <li key={k} className="card text-sm">
+            <p className="muted flex flex-wrap justify-between gap-2 text-xs">
               <span>{title.get(a.lesson_id) ?? "—"} · #{a.sentence_idx + 1}</span>
               <span>{new Date(a.created_at).toLocaleString()} · {Math.round(a.score * 100)}%</span>
             </p>

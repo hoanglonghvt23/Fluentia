@@ -21,9 +21,9 @@ export default async function DictationPage({ params }: { params: Promise<{ id: 
   const startAt = last?.length ? last[0].sentence_idx + 1 : 0;
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">
-      <Link href={`/lessons/${id}`} className="text-sm text-zinc-500">← {lesson.title}</Link>
-      <h1 className="mb-4 mt-2 text-2xl font-semibold">{t("title")}</h1>
+    <main className="page">
+      <Link href={`/lessons/${id}`} className="muted text-sm">← {lesson.title}</Link>
+      <h1 className="mb-4 mt-2">{t("title")}</h1>
       <Dictation
         lessonId={id}
         audioUrl={signed?.signedUrl ?? ""}

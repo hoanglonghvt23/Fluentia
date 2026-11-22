@@ -10,7 +10,7 @@ export function DeleteLessonButton({ lessonId }: { lessonId: string }) {
       action={() => deleteLesson(lessonId)}
       onSubmit={(e) => { if (!confirm(t("deleteConfirm"))) e.preventDefault(); }}
     >
-      <button className="rounded border border-red-300 px-3 py-1.5 text-sm text-red-700 dark:border-red-900 dark:text-red-400">
+      <button className="btn btn-sm btn-danger">
         {t("delete")}
       </button>
     </form>

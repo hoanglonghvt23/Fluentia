@@ -47,8 +47,8 @@ export function SentenceEditor({ lessonId, initial, audioUrl }: { lessonId: stri
     setRows((rs) => [...rs.slice(0, i), left, right, ...rs.slice(i + 1)]);
   };
 
-  const input = "rounded border border-zinc-300 bg-transparent px-2 py-1 dark:border-zinc-700";
-  const btn = "rounded border border-zinc-300 px-2 py-1 text-sm dark:border-zinc-700";
+  const input = "field !min-h-10 !px-2 !py-1";
+  const btn = "btn btn-sm";
 
   return (
     <div>
@@ -57,7 +57,7 @@ export function SentenceEditor({ lessonId, initial, audioUrl }: { lessonId: stri
       <form
         action={(fd) => start(() => regenerateSentences(lessonId, fd).then(() => location.reload()))}
         onSubmit={(e) => { if (!confirm(t("regenConfirm"))) e.preventDefault(); }}
-        className="mb-6 flex flex-wrap items-end gap-3 rounded border border-zinc-200 p-3 text-sm dark:border-zinc-800"
+        className="card mb-6 flex flex-wrap items-end gap-3 text-sm"
       >
         <label className="flex flex-col gap-1">{t("maxChars")}
           <input name="maxChars" type="number" defaultValue={140} min={20} max={400} className={`${input} w-24`} />
@@ -70,8 +70,8 @@ export function SentenceEditor({ lessonId, initial, audioUrl }: { lessonId: stri
 
       <ol className="flex flex-col gap-3">
         {rows.map((r, i) => (
-          <li key={r.key} className="rounded border border-zinc-200 p-3 dark:border-zinc-800">
-            <div className="mb-2 flex items-center gap-2 text-xs text-zinc-500">
+          <li key={r.key} className="card">
+            <div className="muted mb-2 flex items-center gap-2 text-xs">
               <span>#{i + 1}</span>
               <input type="number" step="0.05" value={Number(r.start.toFixed(2))} onChange={(e) => patch(i, { start: Number(e.target.value) })} className={`${input} w-24`} aria-label={t("start")} />
               <span>→</span>
@@ -88,15 +88,15 @@ export function SentenceEditor({ lessonId, initial, audioUrl }: { lessonId: stri
         ))}
       </ol>
 
-      <div className="sticky bottom-0 mt-4 flex items-center gap-3 bg-[var(--background)] py-3">
+      <div className="sticky bottom-0 mt-4 flex items-center gap-3 border-t border-[var(--line)] bg-[var(--background)] py-3">
         <button
           disabled={pending}
           onClick={() => start(async () => { await saveSentences(lessonId, rows.map((r) => ({ id: r.id, text: r.text, start: r.start, end: r.end }))); setSaved(true); })}
-          className="rounded bg-zinc-900 px-4 py-2 text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+          className="btn btn-primary"
         >
           {t("save")}
         </button>
-        {saved && <span className="text-sm text-green-700 dark:text-green-400">{t("saved")}</span>}
+        {saved && <span className="msg-ok text-sm">{t("saved")}</span>}
       </div>
     </div>
   );

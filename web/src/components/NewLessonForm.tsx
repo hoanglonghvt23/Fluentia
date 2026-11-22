@@ -57,12 +57,11 @@ export function NewLessonForm() {
     router.push(`/lessons/${id}`);
   }
 
-  const input = "w-full rounded border border-zinc-300 bg-transparent px-3 py-2 dark:border-zinc-700";
-  const tab = (m: typeof mode) =>
-    `rounded px-3 py-1.5 text-sm ${mode === m ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900" : "border border-zinc-300 dark:border-zinc-700"}`;
+  const input = "field";
+  const tab = (m: typeof mode) => `btn btn-sm ${mode === m ? "btn-primary" : ""}`;
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4">
+    <form onSubmit={onSubmit} className="card flex flex-col gap-4">
       <div className="flex gap-2">
         <button type="button" className={tab("upload")} onClick={() => setMode("upload")}>{t("tabUpload")}</button>
         <button type="button" className={tab("youtube")} onClick={() => setMode("youtube")}>{t("tabYoutube")}</button>
@@ -81,7 +80,7 @@ export function NewLessonForm() {
             {t("subs")}
             <input name="subs" type="file" accept=".srt,.vtt" className={input} />
           </label>
-          <p className="text-xs text-zinc-500">{t("uploadHint")}</p>
+          <p className="muted text-xs">{t("uploadHint")}</p>
         </>
       ) : (
         <label className="flex flex-col gap-1 text-sm">
@@ -89,8 +88,8 @@ export function NewLessonForm() {
           <input name="url" type="url" placeholder="https://www.youtube.com/watch?v=..." className={input} />
         </label>
       )}
-      {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
-      <button disabled={busy} className="rounded bg-zinc-900 px-4 py-2 text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900">
+      {error && <p className="msg-err text-sm">{error}</p>}
+      <button disabled={busy} className="btn btn-primary">
         {busy ? t("uploading") : t("submit")}
       </button>
     </form>
