@@ -120,7 +120,7 @@ export function Shadowing({ lessonId, sentences, audioUrl, initialRecs }: { less
   sentences.forEach((x, k) => { const n = recs.filter((r) => r.sentence_id === x.id).length; if (n) marks[k] = `●${n}`; });
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,30rem)_minmax(0,1fr)]">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
       <audio ref={audio} src={audioUrl} preload="auto" />
 
       <section className="flex min-w-0 flex-col gap-4">
@@ -132,7 +132,7 @@ export function Shadowing({ lessonId, sentences, audioUrl, initialRecs }: { less
           <button className={`btn btn-sm ${showSubs ? "btn-primary" : ""}`} aria-pressed={showSubs} onClick={toggleSubs}>{t("subsToggle")}</button>
         </div>
 
-        {showSubs && <p className="card font-[family-name:var(--font-heading)] text-xl leading-relaxed">{s.text}</p>}
+        {showSubs && <p className="card font-[family-name:var(--font-heading)] text-2xl leading-relaxed">{s.text}</p>}
 
         <div className="flex flex-wrap gap-3">
           <button className="btn btn-primary btn-lg flex-1" onClick={playOriginal}>▶ {t("playOriginal")}</button>
