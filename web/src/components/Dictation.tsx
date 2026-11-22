@@ -94,7 +94,7 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt, showInput }:
   const toggle = (on: boolean) => `btn btn-sm ${on ? "btn-primary" : ""}`;
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,30rem)_minmax(0,1fr)]">
       <audio ref={audio} src={audioUrl} preload="auto" />
 
       <section className="flex min-w-0 flex-col gap-4">
@@ -109,9 +109,9 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt, showInput }:
           </div>
         </div>
 
-        <div className="card flex flex-col items-center gap-4 py-6">
+        <div className="card flex flex-col items-center gap-3 py-4">
           {showSubs && (
-            <p className="max-w-3xl text-center font-[family-name:var(--font-heading)] text-2xl leading-relaxed">{s.text}</p>
+            <p className="text-center font-[family-name:var(--font-heading)] text-xl leading-relaxed">{s.text}</p>
           )}
           <div className="flex flex-wrap items-center justify-center gap-2">
             {!playing ? (
