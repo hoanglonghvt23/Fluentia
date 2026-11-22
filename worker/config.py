@@ -3,7 +3,12 @@ import os
 import sys
 from pathlib import Path
 
+import truststore
 from dotenv import load_dotenv
+
+# Dùng kho chứng chỉ của Windows cho mọi kết nối HTTPS (tránh lỗi "self-signed certificate"
+# khi máy có phần mềm quét HTTPS). Phải chạy trước khi tạo client Supabase.
+truststore.inject_into_ssl()
 
 # Console Windows mặc định không phải UTF-8, ép lại để in tiếng Việt.
 sys.stdout.reconfigure(encoding="utf-8")
