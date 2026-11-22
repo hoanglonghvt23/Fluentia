@@ -5,17 +5,21 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { playSegment, sleep } from "@/lib/audio";
 import { compare, type DiffToken } from "@/lib/diff";
 import { createClient } from "@/lib/supabase/browser";
+import { SentenceList } from "./SentenceList";
 
 type S = { id: string; text: string; start: number; end: number };
 type Settings = { speed: number; repeats: number; pause: number };
 const DEFAULTS: Settings = { speed: 1, repeats: 2, pause: 1.5 };
 const KEY = "fluteria.dictation";
+const SPEEDS = [0.75, 1, 1.25];
 
 export function Dictation({ lessonId, sentences, audioUrl, startAt }: { lessonId: string; sentences: S[]; audioUrl: string; startAt: number }) {
   const t = useTranslations("dictation");
-  const [i, setI] = useState(Math.min(startAt, sentences.length - 1));
+  const tp = useTranslations("practice");
+  const [i, setI] = useState(Math.min(startAt, Math.max(sentences.length - 1, 0)));
   const [answer, setAnswer] = useState("");
   const [result, setResult] = useState<{ score: number; tokens: DiffToken[] } | null>(null);
+  const [marks, setMarks] = useState<Record<number, string>>({});
   const [settings, setSettings] = useState<Settings>(DEFAULTS);
   const [playing, setPlaying] = useState(false);
   const audio = useRef<HTMLAudioElement>(null);
@@ -51,10 +55,11 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt }: { lessonId
   useEffect(() => () => { cancel.current.v = true; }, []);
 
   const check = async () => {
+    if (result) return;
     const r = compare(s.text, answer);
     setResult(r);
-    const supabase = createClient();
-    await supabase.from("attempts").insert({
+    setMarks((m) => ({ ...m, [i]: `${Math.round(r.score * 100)}%` }));
+    await createClient().from("attempts").insert({
       lesson_id: lessonId, sentence_id: s.id, sentence_idx: i, sentence_text: s.text, answer, score: r.score,
     });
   };
@@ -69,67 +74,96 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt }: { lessonId
     if (autoplay) play(sentences[n], settings, settings.pause);
   };
 
-  const input = "field !w-24";
-  const btn = "btn";
-  const primary = "btn btn-primary";
-
+  const last = i === sentences.length - 1;
   if (!s) return <p>{t("empty")}</p>;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
       <audio ref={audio} src={audioUrl} preload="auto" />
 
-      <details className="card text-sm">
-        <summary className="cursor-pointer">{t("settings")}</summary>
-        <div className="mt-3 flex flex-wrap gap-4">
-          <label className="flex flex-col gap-1">{t("speed")}: {settings.speed}x
-            <input type="range" min="0.5" max="1.5" step="0.05" value={settings.speed} onChange={(e) => change({ speed: Number(e.target.value) })} />
-          </label>
-          <label className="flex flex-col gap-1">{t("repeats")}
-            <input type="number" min={1} max={10} value={settings.repeats} onChange={(e) => change({ repeats: Math.max(1, Number(e.target.value) || 1) })} className={`${input} w-20`} />
-          </label>
-          <label className="flex flex-col gap-1">{t("pause")}
-            <input type="number" min={0} max={30} step={0.5} value={settings.pause} onChange={(e) => change({ pause: Math.max(0, Number(e.target.value) || 0) })} className={`${input} w-20`} />
-          </label>
+      <section className="flex min-w-0 flex-col gap-4">
+        <div>
+          <p className="muted mb-1 text-sm">{t("progress", { n: i + 1, total: sentences.length })}</p>
+          <div className="progress"><span style={{ width: `${((i + 1) / sentences.length) * 100}%` }} /></div>
         </div>
-      </details>
 
-      <p className="muted text-sm">{t("progress", { n: i + 1, total: sentences.length })}</p>
-
-      <div className="flex flex-wrap gap-2">
-        <button className={primary} onClick={() => play(s, settings)} disabled={playing}>▶ {t("play")}</button>
-        {playing && <button className={btn} onClick={() => { cancel.current.v = true; setPlaying(false); }}>{t("stop")}</button>}
-      </div>
-
-      <textarea
-        value={answer}
-        onChange={(e) => setAnswer(e.target.value)}
-        disabled={!!result}
-        rows={3}
-        placeholder={t("placeholder")}
-        autoCapitalize="none"
-        spellCheck={false}
-        className="field text-lg"
-      />
-
-      {!result ? (
-        <button className={primary} onClick={check}>{t("check")}</button>
-      ) : (
-        <div className="card">
-          <p className="mb-2 font-medium">{t("score", { pct: Math.round(result.score * 100) })}</p>
-          <p className="mb-2 leading-relaxed">
-            {result.tokens.map((tk, k) => (
-              <span key={k} className={`mr-1 ${tk.status === "missing" ? "mark-missing" : tk.status === "extra" ? "mark-extra" : ""}`}>{tk.word}</span>
+        <div className="card flex flex-col items-center gap-4 py-6">
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {!playing ? (
+              <button className="btn btn-primary btn-lg" onClick={() => play(s, settings)}>▶ {t("play")}</button>
+            ) : (
+              <button className="btn btn-lg" onClick={() => { cancel.current.v = true; setPlaying(false); }}>■ {t("stop")}</button>
+            )}
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-2" role="group" aria-label={t("speed")}>
+            {SPEEDS.map((v) => (
+              <button key={v} className={`btn btn-sm ${settings.speed === v ? "btn-primary" : ""}`} onClick={() => change({ speed: v })}>{v}x</button>
             ))}
-          </p>
-          <p className="muted text-sm">{s.text}</p>
+          </div>
+          <details className="w-full text-sm">
+            <summary className="muted cursor-pointer text-center">{t("settings")}</summary>
+            <div className="mt-3 flex flex-wrap justify-center gap-4">
+              <label className="flex flex-col gap-1">{t("speed")}: {settings.speed}x
+                <input type="range" min="0.5" max="1.5" step="0.05" value={settings.speed} onChange={(e) => change({ speed: Number(e.target.value) })} />
+              </label>
+              <label className="flex flex-col gap-1">{t("repeats")}
+                <input type="number" min={1} max={10} value={settings.repeats} onChange={(e) => change({ repeats: Math.max(1, Number(e.target.value) || 1) })} className="field !w-24" />
+              </label>
+              <label className="flex flex-col gap-1">{t("pause")}
+                <input type="number" min={0} max={30} step={0.5} value={settings.pause} onChange={(e) => change({ pause: Math.max(0, Number(e.target.value) || 0) })} className="field !w-24" />
+              </label>
+            </div>
+          </details>
         </div>
-      )}
 
-      <div className="flex gap-2">
-        <button className={btn} onClick={() => go(i - 1, false)} disabled={i === 0}>{t("prev")}</button>
-        <button className={btn} onClick={() => go(i + 1, true)} disabled={i === sentences.length - 1}>{t("next")}</button>
-      </div>
+        <textarea
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+          onKeyDown={(e) => {
+            // Enter: kiểm tra, rồi Enter nữa: sang câu sau. Shift+Enter xuống dòng.
+            if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); if (result) go(i + 1, true); else check(); }
+          }}
+          disabled={!!result}
+          rows={3}
+          placeholder={t("placeholder")}
+          autoCapitalize="none"
+          spellCheck={false}
+          className="field text-lg"
+        />
+
+        {result && (
+          <div className="card">
+            <p className="mb-2 font-medium">{t("score", { pct: Math.round(result.score * 100) })}</p>
+            <p className="mb-2 leading-relaxed">
+              {result.tokens.map((tk, k) => (
+                <span key={k} className={`mr-1 ${tk.status === "missing" ? "mark-missing" : tk.status === "extra" ? "mark-extra" : ""}`}>{tk.word}</span>
+              ))}
+            </p>
+            <p className="muted text-sm">{s.text}</p>
+          </div>
+        )}
+
+        <details className="card lg:hidden">
+          <summary className="cursor-pointer font-medium">{tp("sentences")}</summary>
+          <div className="mt-2 max-h-72 overflow-auto">
+            <SentenceList texts={sentences.map((x) => x.text)} current={i} marks={marks} onSelect={(n) => go(n, false)} />
+          </div>
+        </details>
+
+        <div className="sticky-bar">
+          <button className="btn" onClick={() => go(i - 1, false)} disabled={i === 0}>← {t("prev")}</button>
+          {!result ? (
+            <button className="btn btn-primary flex-1" onClick={check}>{t("check")}</button>
+          ) : (
+            <button className="btn btn-primary flex-1" onClick={() => go(i + 1, true)} disabled={last}>{t("next")} →</button>
+          )}
+        </div>
+      </section>
+
+      <aside className="card hidden max-h-[calc(100vh-8rem)] overflow-auto lg:sticky lg:top-4 lg:block">
+        <h2 className="mb-2 px-2">{tp("sentences")}</h2>
+        <SentenceList texts={sentences.map((x) => x.text)} current={i} marks={marks} onSelect={(n) => go(n, false)} />
+      </aside>
     </div>
   );
 }

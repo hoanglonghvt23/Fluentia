@@ -20,6 +20,20 @@ def test_parse():
     print("parse OK")
 
 
+def test_words_to_cues():
+    from types import SimpleNamespace as W
+
+    ws = [W(word=" Hello", start=0.0, end=0.4), W(word=" there.", start=0.5, end=0.9),
+          W(word=" How", start=1.0, end=1.2), W(word=" are", start=1.3, end=1.4),
+          W(word=" you", start=5.0, end=5.2), W(word="?", start=5.2, end=5.3)]
+    c = media.words_to_cues(ws)
+    assert [x["text"] for x in c] == ["Hello there.", "How are", "you?"], c  # ngắt ở dấu câu và ở chỗ nghỉ lâu
+    assert c[0]["start"] == 0.0 and c[2]["end"] == 5.3
+    long = [W(word=" w", start=i * 0.1, end=i * 0.1 + 0.05) for i in range(30)]
+    assert all(len(x["text"].split()) <= 14 for x in media.words_to_cues(long))
+    print("words_to_cues OK")
+
+
 def test_media(with_whisper: bool):
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
@@ -43,4 +57,5 @@ def test_media(with_whisper: bool):
 
 if __name__ == "__main__":
     test_parse()
+    test_words_to_cues()
     test_media(with_whisper="--whisper" in sys.argv)

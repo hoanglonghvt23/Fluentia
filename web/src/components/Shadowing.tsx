@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { playSegment } from "@/lib/audio";
 import { createClient } from "@/lib/supabase/browser";
+import { SentenceList } from "./SentenceList";
 
 type S = { id: string; text: string; start: number; end: number };
 export type Rec = { id: string; sentence_id: string | null; path: string; mime: string; created_at: string };
@@ -16,6 +17,7 @@ function pickMime() {
 
 export function Shadowing({ lessonId, sentences, audioUrl, initialRecs }: { lessonId: string; sentences: S[]; audioUrl: string; initialRecs: Rec[] }) {
   const t = useTranslations("shadowing");
+  const tp = useTranslations("practice");
   const [i, setI] = useState(0);
   const [recs, setRecs] = useState(initialRecs);
   const [recording, setRecording] = useState(false);
@@ -92,7 +94,7 @@ export function Shadowing({ lessonId, sentences, audioUrl, initialRecs }: { less
   };
 
   const go = (n: number) => {
-    if (n < 0 || n >= sentences.length) return;
+    if (n < 0 || n >= sentences.length || recording) return;
     cancel.current.v = true;
     if (draft) URL.revokeObjectURL(draft.url);
     setDraft(null);
@@ -100,59 +102,78 @@ export function Shadowing({ lessonId, sentences, audioUrl, initialRecs }: { less
     setI(n);
   };
 
-  const btn = "btn";
-  const primary = "btn btn-primary";
   if (!s) return <p>{t("empty")}</p>;
   const mine = recs.filter((r) => r.sentence_id === s.id);
+  const marks: Record<number, string> = {};
+  sentences.forEach((x, k) => { const n = recs.filter((r) => r.sentence_id === x.id).length; if (n) marks[k] = `●${n}`; });
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
       <audio ref={audio} src={audioUrl} preload="auto" />
-      <p className="muted text-sm">{t("progress", { n: i + 1, total: sentences.length })}</p>
-      <p className="card font-[family-name:var(--font-heading)] text-xl leading-relaxed">{s.text}</p>
 
-      <div className="flex flex-wrap gap-2">
-        <button className={primary} onClick={playOriginal}>▶ {t("playOriginal")}</button>
-        {!recording ? (
-          <button className={btn} onClick={startRec} disabled={!!draft}>● {t("record")}</button>
-        ) : (
-          <button className="btn btn-danger" onClick={stopRec}>■ {t("stop")}</button>
-        )}
-      </div>
-
-      {error && <p className="msg-err text-sm">{error}</p>}
-
-      {draft && (
-        <div className="card flex flex-col gap-2">
-          <audio src={draft.url} controls className="w-full" />
-          <div className="flex gap-2">
-            <button className={primary} onClick={save} disabled={busy}>{t("save")}</button>
-            <button className={btn} onClick={() => { URL.revokeObjectURL(draft.url); setDraft(null); }}>{t("discard")}</button>
-          </div>
-        </div>
-      )}
-
-      {mine.length > 0 && (
+      <section className="flex min-w-0 flex-col gap-4">
         <div>
-          <h2 className="mb-2 text-sm font-medium">{t("saved")}</h2>
-          <ul className="flex flex-col gap-2">
-            {mine.map((r) => (
-              <li key={r.id} className="card flex flex-wrap items-center justify-between gap-2 text-sm">
-                <span className="muted">{new Date(r.created_at).toLocaleString()}</span>
-                <span className="flex gap-2">
-                  <button className={btn} onClick={() => playRec(r)}>▶ {t("listen")}</button>
-                  <button className={btn} onClick={() => removeRec(r)}>{t("delete")}</button>
-                </span>
-              </li>
-            ))}
-          </ul>
+          <p className="muted mb-1 text-sm">{t("progress", { n: i + 1, total: sentences.length })}</p>
+          <div className="progress"><span style={{ width: `${((i + 1) / sentences.length) * 100}%` }} /></div>
         </div>
-      )}
 
-      <div className="flex gap-2">
-        <button className={btn} onClick={() => go(i - 1)} disabled={i === 0 || recording}>{t("prev")}</button>
-        <button className={btn} onClick={() => go(i + 1)} disabled={i === sentences.length - 1 || recording}>{t("next")}</button>
-      </div>
+        <p className="card font-[family-name:var(--font-heading)] text-2xl leading-relaxed">{s.text}</p>
+
+        <div className="flex flex-wrap gap-3">
+          <button className="btn btn-primary btn-lg flex-1" onClick={playOriginal}>▶ {t("playOriginal")}</button>
+          {!recording ? (
+            <button className="btn btn-lg flex-1" onClick={startRec} disabled={!!draft}>● {t("record")}</button>
+          ) : (
+            <button className="btn btn-danger btn-lg flex-1" onClick={stopRec}><span className="rec-dot" /> {t("stop")}</button>
+          )}
+        </div>
+
+        {error && <p className="msg-err text-sm">{error}</p>}
+
+        {draft && (
+          <div className="card flex flex-col gap-3">
+            <audio src={draft.url} controls className="w-full" />
+            <div className="flex gap-2">
+              <button className="btn btn-primary flex-1" onClick={save} disabled={busy}>{t("save")}</button>
+              <button className="btn" onClick={() => { URL.revokeObjectURL(draft.url); setDraft(null); }}>{t("discard")}</button>
+            </div>
+          </div>
+        )}
+
+        {mine.length > 0 && (
+          <div>
+            <h2 className="mb-2">{t("saved")}</h2>
+            <ul className="flex flex-col gap-2">
+              {mine.map((r) => (
+                <li key={r.id} className="card flex flex-wrap items-center justify-between gap-2 text-sm">
+                  <span className="muted">{new Date(r.created_at).toLocaleString()}</span>
+                  <span className="flex gap-2">
+                    <button className="btn btn-sm" onClick={() => playRec(r)}>▶ {t("listen")}</button>
+                    <button className="btn btn-sm btn-danger" onClick={() => removeRec(r)}>{t("delete")}</button>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <details className="card lg:hidden">
+          <summary className="cursor-pointer font-medium">{tp("sentences")}</summary>
+          <div className="mt-2 max-h-72 overflow-auto">
+            <SentenceList texts={sentences.map((x) => x.text)} current={i} marks={marks} onSelect={go} />
+          </div>
+        </details>
+
+        <div className="sticky-bar">
+          <button className="btn" onClick={() => go(i - 1)} disabled={i === 0 || recording}>← {t("prev")}</button>
+          <button className="btn btn-primary flex-1" onClick={() => go(i + 1)} disabled={i === sentences.length - 1 || recording}>{t("next")} →</button>
+        </div>
+      </section>
+
+      <aside className="card hidden max-h-[calc(100vh-8rem)] overflow-auto lg:sticky lg:top-4 lg:block">
+        <h2 className="mb-2 px-2">{tp("sentences")}</h2>
+        <SentenceList texts={sentences.map((x) => x.text)} current={i} marks={marks} onSelect={go} />
+      </aside>
     </div>
   );
 }

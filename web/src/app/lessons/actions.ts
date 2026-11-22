@@ -39,6 +39,16 @@ export async function regenerateSentences(lessonId: string, formData: FormData) 
   revalidatePath(`/lessons/${lessonId}`);
 }
 
+// Nhận dạng lại giọng nói từ âm thanh đã lưu: xóa phụ đề và câu cũ, xếp bài vào hàng đợi cho worker.
+export async function retranscribe(lessonId: string) {
+  const supabase = await createClient();
+  const del = await supabase.from("sentences").delete().eq("lesson_id", lessonId);
+  if (del.error) throw new Error(del.error.message);
+  const { error } = await supabase.from("lessons").update({ cues: null, status: "queued", error: null }).eq("id", lessonId);
+  if (error) throw new Error(error.message);
+  revalidatePath(`/lessons/${lessonId}`);
+}
+
 export async function deleteLesson(lessonId: string) {
   const supabase = await createClient();
   const { data: lesson } = await supabase

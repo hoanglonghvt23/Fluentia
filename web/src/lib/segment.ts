@@ -10,19 +10,24 @@ const CLAUSE = /[,;:]["')\]”’]*$/;
 const endsSentence = (t: string) =>
   ENDS.test(t) && !ABBR.has(t.toLowerCase()) && !/^(?:[A-Za-z]\.){2,}$/.test(t);
 
-type Token = { text: string; start: number; end: number };
+type Token = { text: string; start: number; end: number; gap?: boolean };
+
+const MAX_GAP = 1.5; // khoảng lặng (giây) giữa hai cue coi như ngắt câu
 
 // Mỗi cue chia thành từ, thời gian nội suy theo số ký tự.
 function tokenize(cues: Cue[]): Token[] {
   const out: Token[] = [];
+  let prevEnd = -Infinity;
   for (const cue of cues) {
+    const afterGap = cue.start - prevEnd > MAX_GAP;
+    prevEnd = cue.end;
     const words = cue.text.replace(/<[^>]*>/g, " ").replace(/[♪♫]/g, " ").split(/\s+/).filter(Boolean);
     const total = words.reduce((n, w) => n + w.length + 1, 0);
     let pos = 0;
     for (const w of words) {
       const s = cue.start + ((cue.end - cue.start) * pos) / total;
       pos += w.length + 1;
-      out.push({ text: w, start: s, end: cue.start + ((cue.end - cue.start) * pos) / total });
+      out.push({ text: w, start: s, end: cue.start + ((cue.end - cue.start) * pos) / total, gap: afterGap && out.length > 0 && pos === w.length + 1 });
     }
   }
   return out;
@@ -40,6 +45,11 @@ export function segment(cues: Cue[], { maxChars = 140, minChars = 0 }: SegmentOp
   let len = 0;
 
   for (const tok of tokenize(cues)) {
+    if (cur.length && tok.gap) {
+      groups.push(cur);
+      cur = [];
+      len = 0;
+    }
     if (cur.length && len + 1 + tok.text.length > maxChars) {
       // Quá dài: cắt tại dấu phẩy gần nhất (nửa sau của nhóm), nếu không có thì cắt ngay.
       let at = -1;

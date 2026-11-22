@@ -25,6 +25,15 @@ test("văn bản không dấu câu bị cắt theo maxChars", () => {
   assert.ok(s.every((x) => x.text.length <= 50));
 });
 
+test("khoảng lặng dài giữa hai cue ngắt câu dù chưa có dấu chấm", () => {
+  const s = segment([
+    { start: 8, end: 9.6, text: "On the" },
+    { start: 21, end: 26, text: "nature called I went to the camp." },
+  ]);
+  assert.deepEqual(s.map((x) => x.text), ["On the", "nature called I went to the camp."]);
+  assert.equal(s[1].start, 21);
+});
+
 test("minChars gộp câu ngắn vào câu sau", () => {
   const s = segment([{ start: 0, end: 4, text: "Yes. I think so." }], { minChars: 10 });
   assert.equal(s.length, 1);

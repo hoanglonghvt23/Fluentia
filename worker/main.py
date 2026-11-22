@@ -30,6 +30,16 @@ def process(db: Client, lesson: dict, work: Path) -> None:
     update: dict = {}
     subs_file: Path | None = None
 
+    # Nhận dạng lại: bài đã có âm thanh nhưng bị xóa phụ đề (người dùng bấm "Nhận dạng lại").
+    if lesson.get("audio_path") and not lesson.get("cues"):
+        audio = work / "audio.mp3"
+        audio.write_bytes(store.download(lesson["audio_path"]))
+        cues = media.transcribe(audio)
+        if not cues:
+            raise RuntimeError("Không nhận ra lời nói trong file này.")
+        db.table("lessons").update({"cues": cues, "status": "ready", "error": None}).eq("id", lid).execute()
+        return
+
     if lesson["source_type"] == "youtube":
         src, subs_file, title = media.download_youtube(lesson["source_url"], work)
         if lesson["title"] == lesson["source_url"]:

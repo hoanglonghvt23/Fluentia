@@ -24,7 +24,7 @@ export default async function Home() {
       {!lessons?.length ? (
         <p className="muted">{t("empty")}</p>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="grid gap-3 sm:grid-cols-2">
           {lessons.map((l) => (
             <li key={l.id}>
               <Link href={`/lessons/${l.id}`} className="card card-link flex items-center justify-between gap-3">

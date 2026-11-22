@@ -47,48 +47,51 @@ export function SentenceEditor({ lessonId, initial, audioUrl }: { lessonId: stri
     setRows((rs) => [...rs.slice(0, i), left, right, ...rs.slice(i + 1)]);
   };
 
-  const input = "field !min-h-10 !px-2 !py-1";
-  const btn = "btn btn-sm";
+  const num = "field !min-h-10 !w-24 !px-2 !py-1 text-sm";
+  const icon = "btn btn-sm !px-3";
 
   return (
     <div>
       <audio ref={audio} src={audioUrl} preload="auto" />
 
-      <form
-        action={(fd) => start(() => regenerateSentences(lessonId, fd).then(() => location.reload()))}
-        onSubmit={(e) => { if (!confirm(t("regenConfirm"))) e.preventDefault(); }}
-        className="card mb-6 flex flex-wrap items-end gap-3 text-sm"
-      >
-        <label className="flex flex-col gap-1">{t("maxChars")}
-          <input name="maxChars" type="number" defaultValue={140} min={20} max={400} className={`${input} w-24`} />
-        </label>
-        <label className="flex flex-col gap-1">{t("minChars")}
-          <input name="minChars" type="number" defaultValue={0} min={0} max={400} className={`${input} w-24`} />
-        </label>
-        <button className={btn} disabled={pending}>{t("regen")}</button>
-      </form>
+      <details className="card mb-4 text-sm">
+        <summary className="cursor-pointer font-medium">{t("options")}</summary>
+        <form
+          action={(fd) => start(() => regenerateSentences(lessonId, fd).then(() => location.reload()))}
+          onSubmit={(e) => { if (!confirm(t("regenConfirm"))) e.preventDefault(); }}
+          className="mt-3 flex flex-wrap items-end gap-3"
+        >
+          <label className="flex flex-col gap-1">{t("maxChars")}
+            <input name="maxChars" type="number" defaultValue={140} min={20} max={400} className={num} />
+          </label>
+          <label className="flex flex-col gap-1">{t("minChars")}
+            <input name="minChars" type="number" defaultValue={0} min={0} max={400} className={num} />
+          </label>
+          <button className="btn btn-sm" disabled={pending}>{t("regen")}</button>
+        </form>
+      </details>
 
       <ol className="flex flex-col gap-3">
         {rows.map((r, i) => (
           <li key={r.key} className="card">
-            <div className="muted mb-2 flex items-center gap-2 text-xs">
-              <span>#{i + 1}</span>
-              <input type="number" step="0.05" value={Number(r.start.toFixed(2))} onChange={(e) => patch(i, { start: Number(e.target.value) })} className={`${input} w-24`} aria-label={t("start")} />
-              <span>→</span>
-              <input type="number" step="0.05" value={Number(r.end.toFixed(2))} onChange={(e) => patch(i, { end: Number(e.target.value) })} className={`${input} w-24`} aria-label={t("end")} />
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <span className="muted w-8 text-sm">#{i + 1}</span>
+              <input type="number" step="0.05" value={Number(r.start.toFixed(2))} onChange={(e) => patch(i, { start: Number(e.target.value) })} className={num} aria-label={t("start")} />
+              <span className="muted">→</span>
+              <input type="number" step="0.05" value={Number(r.end.toFixed(2))} onChange={(e) => patch(i, { end: Number(e.target.value) })} className={num} aria-label={t("end")} />
+              <span className="ml-auto flex gap-2">
+                <button type="button" className={`${icon} btn-primary`} title={t("play")} aria-label={t("play")} onClick={() => play(r)}>▶</button>
+                <button type="button" className={icon} title={t("split")} aria-label={t("split")} onClick={() => split(i)}>✂</button>
+                {i < rows.length - 1 && <button type="button" className={icon} title={t("merge")} aria-label={t("merge")} onClick={() => merge(i)}>⤵</button>}
+                <button type="button" className={`${icon} btn-danger`} title={t("remove")} aria-label={t("remove")} onClick={() => { setSaved(false); setRows((rs) => rs.filter((_, j) => j !== i)); }}>✕</button>
+              </span>
             </div>
-            <textarea id={`t-${r.key}`} value={r.text} rows={2} onChange={(e) => patch(i, { text: e.target.value })} className={`${input} mb-2 w-full`} />
-            <div className="flex flex-wrap gap-2">
-              <button type="button" className={btn} onClick={() => play(r)}>▶ {t("play")}</button>
-              <button type="button" className={btn} onClick={() => split(i)}>{t("split")}</button>
-              {i < rows.length - 1 && <button type="button" className={btn} onClick={() => merge(i)}>{t("merge")}</button>}
-              <button type="button" className={btn} onClick={() => { setSaved(false); setRows((rs) => rs.filter((_, j) => j !== i)); }}>{t("remove")}</button>
-            </div>
+            <textarea id={`t-${r.key}`} value={r.text} rows={2} onChange={(e) => patch(i, { text: e.target.value })} className="field" />
           </li>
         ))}
       </ol>
 
-      <div className="sticky bottom-0 mt-4 flex items-center gap-3 border-t border-[var(--line)] bg-[var(--background)] py-3">
+      <div className="sticky-bar mt-4">
         <button
           disabled={pending}
           onClick={() => start(async () => { await saveSentences(lessonId, rows.map((r) => ({ id: r.id, text: r.text, start: r.start, end: r.end }))); setSaved(true); })}
@@ -97,6 +100,7 @@ export function SentenceEditor({ lessonId, initial, audioUrl }: { lessonId: stri
           {t("save")}
         </button>
         {saved && <span className="msg-ok text-sm">{t("saved")}</span>}
+        <span className="muted ml-auto hidden text-xs sm:inline">✂ {t("split")} · ⤵ {t("merge")}</span>
       </div>
     </div>
   );

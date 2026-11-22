@@ -48,9 +48,17 @@
     "processing": "The worker is processing this lesson; it may take a few minutes.",
     "failed": "Processing failed",
     "delete": "Delete lesson",
+    "retranscribe": "Re-transcribe",
+    "retranscribeConfirm": "Re-transcribing deletes the current sentences and rebuilds them. The worker must be running. Continue?",
+    "dictationDesc": "Listen to each sentence and type what you hear.",
+    "shadowingDesc": "Hear the original, record your voice and play it back.",
     "deleteConfirm": "Delete this lesson with all its history and recordings?"
   },
+  "practice": {
+    "sentences": "Sentences"
+  },
   "editor": {
+    "options": "Sentence splitting options",
     "maxChars": "Max sentence length (chars)",
     "minChars": "Min sentence length",
     "regen": "Re-split from subtitles",

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { AutoRefresh } from "@/components/AutoRefresh";
-import { DeleteLessonButton } from "@/components/DeleteLessonButton";
+import { LessonActions } from "@/components/LessonActions";
 import { SentenceEditor } from "@/components/SentenceEditor";
 import { generateSentences } from "@/lib/sentences";
 import { createClient } from "@/lib/supabase/server";
@@ -16,7 +16,6 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
   if (!lesson) notFound();
 
   const waiting = lesson.status === "queued" || lesson.status === "processing";
-  const btn = "btn";
   let body: React.ReactNode;
 
   if (lesson.status === "ready") {
@@ -29,9 +28,15 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
     const { data: signed } = await supabase.storage.from("media").createSignedUrl(lesson.audio_path, 3 * 3600);
     body = (
       <>
-        <div className="mb-6 flex flex-wrap gap-2">
-          <Link href={`/lessons/${id}/dictation`} className="btn btn-primary">{t("dictation")}</Link>
-          <Link href={`/lessons/${id}/shadowing`} className={btn}>{t("shadowing")}</Link>
+        <div className="mb-8 grid gap-3 sm:grid-cols-2">
+          <Link href={`/lessons/${id}/dictation`} className="card card-link">
+            <h2 className="mb-1">{t("dictation")}</h2>
+            <p className="muted text-sm">{t("dictationDesc")}</p>
+          </Link>
+          <Link href={`/lessons/${id}/shadowing`} className="card card-link">
+            <h2 className="mb-1">{t("shadowing")}</h2>
+            <p className="muted text-sm">{t("shadowingDesc")}</p>
+          </Link>
         </div>
         <SentenceEditor
           lessonId={id}
@@ -51,7 +56,7 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
       {waiting && <AutoRefresh />}
       <div className="mb-4 flex items-start justify-between gap-3">
         <h1>{lesson.title}</h1>
-        <DeleteLessonButton lessonId={id} />
+        <LessonActions lessonId={id} canRetranscribe={!!lesson.audio_path && !waiting} />
       </div>
       {body}
     </main>

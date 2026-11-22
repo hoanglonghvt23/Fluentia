@@ -9,7 +9,7 @@ export async function Header() {
 
   return (
     <header className="border-b border-[var(--line)]">
-      <div className="mx-auto flex max-w-[44rem] flex-wrap items-center gap-2 px-4 py-3">
+      <div className="mx-auto flex max-w-[64rem] flex-wrap items-center gap-2 px-4 py-3">
         <Link href="/" className="mr-auto font-[family-name:var(--font-heading)] text-xl font-semibold">
           Fluteria<span className="text-[var(--accent)]">.</span>
         </Link>
