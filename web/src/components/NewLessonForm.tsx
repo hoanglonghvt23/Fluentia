@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { DEFAULT_SETTINGS, posInt, type LessonSettings } from "@/lib/lessonSettings";
+import { posInt, type LessonSettings } from "@/lib/lessonSettings";
 import { createClient } from "@/lib/supabase/browser";
 
 const MAX_BYTES = 50 * 1024 * 1024; // giới hạn file của gói Supabase Free
@@ -36,11 +36,8 @@ export function NewLessonForm() {
     // Ô để trống = không giới hạn; ô có giá trị phải là số nguyên dương.
     const raw = (k: string) => String(form.get(k) ?? "").trim();
     for (const k of ["maxSentences", "maxWords"]) if (raw(k) && !posInt(raw(k))) return setError(t("errLimits"));
-    const sentenceMax = posInt(raw("sentenceMax")) ?? DEFAULT_SETTINGS.sentenceMax;
-    const sentenceMin = Math.max(0, Math.floor(Number(raw("sentenceMin")) || 0));
-    if (sentenceMin > sentenceMax || sentenceMax > 400) return setError(t("errLength"));
     const settings: LessonSettings = {
-      sentenceMax, sentenceMin, showInput,
+      showInput,
       maxSentences: posInt(raw("maxSentences")),
       maxWords: posInt(raw("maxWords")),
     };
@@ -142,17 +139,6 @@ export function NewLessonForm() {
             <p className="muted text-xs">{t("limitsHint")}</p>
           </fieldset>
 
-          <fieldset className="flex flex-col gap-2">
-            <legend className="mb-1 text-sm font-medium">{t("lengthTitle")}</legend>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <label className="flex flex-col gap-1 text-sm">{t("sentenceMax")}
-                <input name="sentenceMax" type="number" min={20} max={400} defaultValue={DEFAULT_SETTINGS.sentenceMax} className="field" />
-              </label>
-              <label className="flex flex-col gap-1 text-sm">{t("sentenceMin")}
-                <input name="sentenceMin" type="number" min={0} max={400} defaultValue={DEFAULT_SETTINGS.sentenceMin} className="field" />
-              </label>
-            </div>
-          </fieldset>
         </section>
       </div>
 

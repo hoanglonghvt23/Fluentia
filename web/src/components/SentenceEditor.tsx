@@ -62,12 +62,6 @@ export function SentenceEditor({ lessonId, initial, audioUrl, settings }: { less
           onSubmit={(e) => { if (!confirm(t("regenConfirm"))) e.preventDefault(); }}
           className="mt-3 flex flex-wrap items-end gap-3"
         >
-          <label className="flex flex-col gap-1">{t("maxChars")}
-            <input name="sentenceMax" type="number" defaultValue={settings.sentenceMax} min={20} max={400} className={num} />
-          </label>
-          <label className="flex flex-col gap-1">{t("minChars")}
-            <input name="sentenceMin" type="number" defaultValue={settings.sentenceMin} min={0} max={400} className={num} />
-          </label>
           <label className="flex flex-col gap-1">{t("maxSentences")}
             <input name="maxSentences" type="number" defaultValue={settings.maxSentences ?? ""} min={1} placeholder={t("unlimited")} className={num} />
           </label>

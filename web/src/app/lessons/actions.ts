@@ -41,8 +41,6 @@ export async function regenerateSentences(lessonId: string, formData: FormData) 
 
   const settings = readSettings({
     ...readSettings(lesson.settings),
-    sentenceMax: formData.get("sentenceMax"),
-    sentenceMin: formData.get("sentenceMin"),
     maxSentences: formData.get("maxSentences"),
     maxWords: formData.get("maxWords"),
   });
