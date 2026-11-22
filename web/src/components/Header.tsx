@@ -11,6 +11,7 @@ export async function Header() {
   return (
     <header className="flex flex-wrap items-center gap-3 border-b border-zinc-200 px-4 py-3 dark:border-zinc-800">
       <Link href="/" className="mr-auto text-lg font-semibold">Fluteria</Link>
+      {me && <Link href="/progress" className={btn}>{t("progress")}</Link>}
       {me?.role === "admin" && <Link href="/admin" className={btn}>{t("admin")}</Link>}
       <form action={setLocale}>
         <input type="hidden" name="locale" value={other} />

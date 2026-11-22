@@ -1,6 +1,12 @@
 {
-  "app": { "tagline": "English practice: Dictation and Shadowing" },
-  "nav": { "logout": "Log out", "admin": "Admin", "home": "Home" },
+  "app": {
+    "tagline": "English practice: Dictation and Shadowing"
+  },
+  "nav": {
+    "logout": "Log out",
+    "admin": "Admin",
+    "progress": "Progress"
+  },
   "login": {
     "title": "Log in",
     "username": "Username",
@@ -9,7 +15,96 @@
     "invalid": "Wrong username or password.",
     "forgot": "Forgot your password? Ask an admin to reset it for you."
   },
-  "home": { "hello": "Hello, {username}", "role_admin": "Administrator", "role_user": "User" },
+  "home": {
+    "hello": "Hello, {username}",
+    "newLesson": "New lesson",
+    "empty": "No lessons yet. Click \"New lesson\" to start.",
+    "status": {
+      "queued": "Waiting",
+      "processing": "Processing",
+      "ready": "Ready",
+      "error": "Error"
+    }
+  },
+  "newLesson": {
+    "heading": "Create a new lesson",
+    "tabUpload": "Upload file",
+    "tabYoutube": "YouTube link",
+    "title": "Title (optional)",
+    "video": "Video or audio file",
+    "subs": "Subtitle file .srt or .vtt (optional; speech recognition is used if missing)",
+    "uploadHint": "Max 50 MB per file. The worker must be running on the computer to process the lesson.",
+    "url": "YouTube link",
+    "submit": "Create lesson",
+    "uploading": "Uploading...",
+    "errNoFile": "Choose a video or audio file.",
+    "errTooBig": "File too large (max 50 MB).",
+    "errUrl": "Invalid YouTube link."
+  },
+  "lesson": {
+    "dictation": "Dictation",
+    "shadowing": "Shadowing",
+    "queued": "Waiting for the worker. Start the worker on the computer.",
+    "processing": "The worker is processing this lesson; it may take a few minutes.",
+    "failed": "Processing failed",
+    "delete": "Delete lesson",
+    "deleteConfirm": "Delete this lesson with all its history and recordings?"
+  },
+  "editor": {
+    "maxChars": "Max sentence length (chars)",
+    "minChars": "Min sentence length",
+    "regen": "Re-split from subtitles",
+    "regenConfirm": "Re-splitting discards all current sentence edits. Continue?",
+    "start": "Start (s)",
+    "end": "End (s)",
+    "play": "Play",
+    "split": "Split at cursor",
+    "splitHint": "Put the cursor inside the sentence where you want to split.",
+    "merge": "Merge with next",
+    "remove": "Remove",
+    "save": "Save changes",
+    "saved": "Saved"
+  },
+  "dictation": {
+    "title": "Dictation",
+    "settings": "Playback settings",
+    "speed": "Speed",
+    "repeats": "Plays per sentence",
+    "pause": "Pause (seconds)",
+    "progress": "Sentence {n} / {total}",
+    "play": "Play",
+    "stop": "Stop",
+    "placeholder": "Type what you hear...",
+    "check": "Check",
+    "score": "{pct}% correct",
+    "prev": "Previous",
+    "next": "Next",
+    "empty": "This lesson has no sentences."
+  },
+  "shadowing": {
+    "title": "Shadowing",
+    "progress": "Sentence {n} / {total}",
+    "playOriginal": "Play original",
+    "record": "Record",
+    "stop": "Stop",
+    "save": "Save recording",
+    "discard": "Discard",
+    "saved": "Saved recordings",
+    "listen": "Listen",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this recording?",
+    "prev": "Previous",
+    "next": "Next",
+    "empty": "This lesson has no sentences.",
+    "errMic": "Cannot use the microphone. Allow microphone access (HTTPS required) and try again."
+  },
+  "progress": {
+    "title": "Progress and history",
+    "byLesson": "By lesson",
+    "history": "Recent Dictation history",
+    "summary": "{done} sentences practiced · average score {avg}% · {recs} recordings",
+    "empty": "No lessons yet."
+  },
   "admin": {
     "title": "User management",
     "create": "Create account",

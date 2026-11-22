@@ -24,6 +24,12 @@ Phiên bản đầu dùng riêng cho 2 người. Thiết kế để sau này m�
 - Phải có cách sửa mật khẩu khi quên: người dùng tự sửa hoặc tài khoản admin sửa giúp.
 - Lưu tiến độ và lịch sử học.
 - Công nghệ (chốt ở giai đoạn 0): web/ dùng Next.js (App Router, TypeScript, Tailwind), Node 26 LTS. worker/ dùng Python với venv và requirements.txt. Triển khai: Vercel nối với GitHub (Root Directory = web), tự deploy khi push.
+- Quên mật khẩu: chỉ admin đặt lại (trang /admin). Không có đăng ký công khai, admin tạo tài khoản.
+- Giao diện: cả tiếng Việt và tiếng Anh, có nút chuyển (next-intl, lưu cookie).
+- Whisper: model small chạy bằng CPU (faster-whisper) trên máy worker (15,8 GB RAM, không GPU rời).
+- Phụ đề tự động của YouTube KHÔNG tính là phụ đề có sẵn: chỉ dùng phụ đề do người đăng tải, nếu không có thì dùng Whisper.
+- Lưu trữ: chỉ lưu âm thanh (worker tách rồi xóa video), dùng Supabase 1 GB. File tải lên tối đa 50 MB (giới hạn gói Free).
+- Người dùng làm gộp Giai đoạn 2 đến 6 rồi kiểm tra một lần (bỏ quy tắc dừng sau mỗi giai đoạn cho đợt này).
 
 ## Hoãn lại (CHƯA làm ở phiên bản đầu)
 - Kiểm tra phát âm và ngữ điệu của người dùng so với câu được chọn (ngữ điệu so với âm thanh gốc của video).
@@ -31,11 +37,7 @@ Phiên bản đầu dùng riêng cho 2 người. Thiết kế để sau này m�
   Hãy chừa sẵn chỗ: bản ghi âm phải gắn với câu gốc và mốc thời gian; phần chấm sau này là một module có thể thêm vào.
 
 ## Chưa chốt (hỏi người dùng trước khi làm phần liên quan)
-- Cấu hình máy chạy worker (RAM, GPU) để chọn kích cỡ Whisper. Cần trước giai đoạn 4.
-- Phụ đề tự động của YouTube có tính là "phụ đề có sẵn" không. Cần trước giai đoạn 4.
-- Lưu trữ: chỉ lưu âm thanh hay cả video; chấp nhận giới hạn 1 GB của Supabase hay dùng thêm kho khác. Cần trước giai đoạn 5.
-- Quên mật khẩu: chỉ admin đặt lại, hay thêm mã khôi phục. Cần trước giai đoạn 1.
-- Ngôn ngữ giao diện: tiếng Việt, tiếng Anh, hay cả hai. Cần trước giai đoạn 1.
+- Hiện không còn điểm nào chưa chốt.
 
 ## Kiến trúc đề xuất (người dùng chưa duyệt chính thức; hỏi trước khi chọn công nghệ cụ thể)
 - Vercel: giao diện web và các API nhẹ. Đề xuất Next.js.

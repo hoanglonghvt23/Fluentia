@@ -1,6 +1,12 @@
 {
-  "app": { "tagline": "Luyện tiếng Anh: Dictation và Shadowing" },
-  "nav": { "logout": "Đăng xuất", "admin": "Quản trị", "home": "Trang chủ" },
+  "app": {
+    "tagline": "Luyện tiếng Anh: Dictation và Shadowing"
+  },
+  "nav": {
+    "logout": "Đăng xuất",
+    "admin": "Quản trị",
+    "progress": "Tiến độ"
+  },
   "login": {
     "title": "Đăng nhập",
     "username": "Tên đăng nhập",
@@ -9,7 +15,96 @@
     "invalid": "Sai tên đăng nhập hoặc mật khẩu.",
     "forgot": "Quên mật khẩu? Nhờ quản trị viên đặt lại giúp bạn."
   },
-  "home": { "hello": "Xin chào, {username}", "role_admin": "Quản trị viên", "role_user": "Người dùng" },
+  "home": {
+    "hello": "Xin chào, {username}",
+    "newLesson": "Bài mới",
+    "empty": "Chưa có bài học nào. Bấm \"Bài mới\" để bắt đầu.",
+    "status": {
+      "queued": "Đang chờ xử lý",
+      "processing": "Đang xử lý",
+      "ready": "Sẵn sàng",
+      "error": "Lỗi"
+    }
+  },
+  "newLesson": {
+    "heading": "Tạo bài học mới",
+    "tabUpload": "Tải file lên",
+    "tabYoutube": "Link YouTube",
+    "title": "Tên bài (không bắt buộc)",
+    "video": "File video hoặc âm thanh",
+    "subs": "File phụ đề .srt hoặc .vtt (không bắt buộc, không có thì tự nhận dạng giọng nói)",
+    "uploadHint": "Tối đa 50 MB mỗi file. Cần bật worker trên máy tính để xử lý bài.",
+    "url": "Link YouTube",
+    "submit": "Tạo bài học",
+    "uploading": "Đang tải lên...",
+    "errNoFile": "Hãy chọn một file video hoặc âm thanh.",
+    "errTooBig": "File quá lớn (tối đa 50 MB).",
+    "errUrl": "Link YouTube không hợp lệ."
+  },
+  "lesson": {
+    "dictation": "Dictation (nghe chép)",
+    "shadowing": "Shadowing (nhại theo)",
+    "queued": "Bài đang chờ worker xử lý. Hãy bật worker trên máy tính.",
+    "processing": "Worker đang xử lý bài này, có thể mất vài phút.",
+    "failed": "Xử lý thất bại",
+    "delete": "Xóa bài",
+    "deleteConfirm": "Xóa bài học này cùng toàn bộ lịch sử và bản ghi âm?"
+  },
+  "editor": {
+    "maxChars": "Độ dài câu tối đa (ký tự)",
+    "minChars": "Độ dài câu tối thiểu",
+    "regen": "Tách lại từ phụ đề",
+    "regenConfirm": "Tách lại sẽ xóa mọi chỉnh sửa câu hiện tại. Tiếp tục?",
+    "start": "Bắt đầu (giây)",
+    "end": "Kết thúc (giây)",
+    "play": "Nghe",
+    "split": "Tách tại con trỏ",
+    "splitHint": "Đặt con trỏ vào giữa câu, tại chỗ muốn tách.",
+    "merge": "Gộp với câu sau",
+    "remove": "Xóa câu",
+    "save": "Lưu thay đổi",
+    "saved": "Đã lưu"
+  },
+  "dictation": {
+    "title": "Dictation",
+    "settings": "Cài đặt phát",
+    "speed": "Tốc độ",
+    "repeats": "Số lần đọc mỗi câu",
+    "pause": "Khoảng ngắt (giây)",
+    "progress": "Câu {n} / {total}",
+    "play": "Nghe",
+    "stop": "Dừng",
+    "placeholder": "Gõ những gì bạn nghe được...",
+    "check": "Kiểm tra",
+    "score": "Đúng {pct}%",
+    "prev": "Câu trước",
+    "next": "Câu sau",
+    "empty": "Bài này chưa có câu nào."
+  },
+  "shadowing": {
+    "title": "Shadowing",
+    "progress": "Câu {n} / {total}",
+    "playOriginal": "Nghe bản gốc",
+    "record": "Ghi âm",
+    "stop": "Dừng",
+    "save": "Lưu bản ghi",
+    "discard": "Bỏ",
+    "saved": "Bản ghi đã lưu",
+    "listen": "Nghe",
+    "delete": "Xóa",
+    "deleteConfirm": "Xóa bản ghi này?",
+    "prev": "Câu trước",
+    "next": "Câu sau",
+    "empty": "Bài này chưa có câu nào.",
+    "errMic": "Không dùng được micro. Hãy cho phép micro (cần HTTPS) rồi thử lại."
+  },
+  "progress": {
+    "title": "Tiến độ và lịch sử",
+    "byLesson": "Theo bài học",
+    "history": "Lịch sử Dictation gần đây",
+    "summary": "Đã luyện {done} câu · điểm trung bình {avg}% · {recs} bản ghi",
+    "empty": "Chưa có bài học nào."
+  },
   "admin": {
     "title": "Quản trị người dùng",
     "create": "Tạo tài khoản",
