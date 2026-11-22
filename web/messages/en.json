@@ -5,7 +5,12 @@
   "nav": {
     "logout": "Log out",
     "admin": "Admin",
-    "progress": "Progress"
+    "progress": "Progress",
+    "lessons": "Lessons",
+    "account": "Account",
+    "signedInAs": "Signed in as",
+    "roleAdmin": "Administrator",
+    "roleUser": "User"
   },
   "login": {
     "title": "Log in",
@@ -36,7 +41,25 @@
     "uploadHint": "Max 50 MB per file. The worker must be running on the computer to process the lesson.",
     "url": "YouTube link",
     "submit": "Create lesson",
+    "confirm": "Confirm and create",
     "uploading": "Uploading...",
+    "stepSource": "1. Lesson source",
+    "stepOptions": "2. Options before creating",
+    "modeTitle": "Dictation mode",
+    "modeInput": "With input box",
+    "modeInputDesc": "Type what you hear; the app checks and scores it.",
+    "modeListen": "No input box",
+    "modeListenDesc": "Listen only, no typing. Subtitles are shown so you can follow along.",
+    "limitsTitle": "Lesson size",
+    "maxSentences": "Max sentences",
+    "maxWords": "Max total words",
+    "unlimited": "No limit",
+    "limitsHint": "Keeps the first sentences until one of the limits is reached. Leave empty to keep the whole lesson.",
+    "lengthTitle": "Sentence length",
+    "sentenceMax": "Max (characters)",
+    "sentenceMin": "Min (characters)",
+    "errLimits": "Sentences and words must be positive whole numbers, or empty.",
+    "errLength": "Invalid sentence length (min cannot exceed max; max is 400).",
     "errNoFile": "Choose a video or audio file.",
     "errTooBig": "File too large (max 50 MB).",
     "errUrl": "Invalid YouTube link."
@@ -55,10 +78,14 @@
     "deleteConfirm": "Delete this lesson with all its history and recordings?"
   },
   "practice": {
-    "sentences": "Sentences"
+    "sentences": "Sentences",
+    "sentenceN": "Sentence {n}"
   },
   "editor": {
-    "options": "Sentence splitting options",
+    "maxSentences": "Max sentences",
+    "maxWords": "Max total words",
+    "unlimited": "No limit",
+    "options": "Sentence splitting and lesson size options",
     "maxChars": "Max sentence length (chars)",
     "minChars": "Min sentence length",
     "regen": "Re-split from subtitles",
@@ -74,6 +101,8 @@
     "saved": "Saved"
   },
   "dictation": {
+    "inputToggle": "Input box",
+    "subsToggle": "Subtitles",
     "title": "Dictation",
     "settings": "Playback settings",
     "speed": "Speed",
@@ -90,6 +119,7 @@
     "empty": "This lesson has no sentences."
   },
   "shadowing": {
+    "subsToggle": "Subtitles",
     "title": "Shadowing",
     "progress": "Sentence {n} / {total}",
     "playOriginal": "Play original",

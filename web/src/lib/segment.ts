@@ -42,6 +42,23 @@ const toSentence = (g: Token[]): Sentence => ({
   text: g.map((t) => t.text).join(" "),
 });
 
+// Giữ các câu đầu cho tới khi chạm giới hạn số câu hoặc tổng số chữ. Luôn giữ ít nhất câu đầu tiên.
+export function limitSentences(
+  list: Sentence[],
+  { maxSentences, maxWords }: { maxSentences?: number | null; maxWords?: number | null },
+): Sentence[] {
+  const out: Sentence[] = [];
+  let words = 0;
+  for (const s of list) {
+    const n = s.text.split(/\s+/).filter(Boolean).length;
+    if (maxSentences && out.length >= maxSentences) break;
+    if (maxWords && out.length && words + n > maxWords) break;
+    out.push(s);
+    words += n;
+  }
+  return out;
+}
+
 export function segment(cues: Cue[], { maxChars = 140, minChars = 0 }: SegmentOptions = {}): Sentence[] {
   const groups: Token[][] = [];
   let cur: Token[] = [];

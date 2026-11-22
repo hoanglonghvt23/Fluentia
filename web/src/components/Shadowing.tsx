@@ -6,6 +6,8 @@ import { playSegment } from "@/lib/audio";
 import { createClient } from "@/lib/supabase/browser";
 import { SentenceList } from "./SentenceList";
 
+const SUBS_KEY = "fluteria.shadowing.subs";
+
 type S = { id: string; text: string; start: number; end: number };
 export type Rec = { id: string; sentence_id: string | null; path: string; mime: string; created_at: string };
 
@@ -24,10 +26,20 @@ export function Shadowing({ lessonId, sentences, audioUrl, initialRecs }: { less
   const [draft, setDraft] = useState<{ blob: Blob; url: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [showSubs, setShowSubs] = useState(true);
   const audio = useRef<HTMLAudioElement>(null);
   const cancel = useRef({ v: false });
   const recorder = useRef<MediaRecorder | null>(null);
   const s = sentences[i];
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    try { if (localStorage.getItem(SUBS_KEY) === "0") setShowSubs(false); } catch {}
+  }, []);
+  const toggleSubs = () => {
+    setShowSubs(!showSubs);
+    try { localStorage.setItem(SUBS_KEY, showSubs ? "0" : "1"); } catch {}
+  };
 
   useEffect(() => () => { cancel.current.v = true; recorder.current?.stream.getTracks().forEach((tr) => tr.stop()); }, []);
 
@@ -108,16 +120,19 @@ export function Shadowing({ lessonId, sentences, audioUrl, initialRecs }: { less
   sentences.forEach((x, k) => { const n = recs.filter((r) => r.sentence_id === x.id).length; if (n) marks[k] = `●${n}`; });
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
       <audio ref={audio} src={audioUrl} preload="auto" />
 
       <section className="flex min-w-0 flex-col gap-4">
-        <div>
-          <p className="muted mb-1 text-sm">{t("progress", { n: i + 1, total: sentences.length })}</p>
-          <div className="progress"><span style={{ width: `${((i + 1) / sentences.length) * 100}%` }} /></div>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div className="min-w-48 flex-1">
+            <p className="muted mb-1 text-sm">{t("progress", { n: i + 1, total: sentences.length })}</p>
+            <div className="progress"><span style={{ width: `${((i + 1) / sentences.length) * 100}%` }} /></div>
+          </div>
+          <button className={`btn btn-sm ${showSubs ? "btn-primary" : ""}`} aria-pressed={showSubs} onClick={toggleSubs}>{t("subsToggle")}</button>
         </div>
 
-        <p className="card font-[family-name:var(--font-heading)] text-2xl leading-relaxed">{s.text}</p>
+        {showSubs && <p className="card font-[family-name:var(--font-heading)] text-2xl leading-relaxed">{s.text}</p>}
 
         <div className="flex flex-wrap gap-3">
           <button className="btn btn-primary btn-lg flex-1" onClick={playOriginal}>▶ {t("playOriginal")}</button>
@@ -160,7 +175,7 @@ export function Shadowing({ lessonId, sentences, audioUrl, initialRecs }: { less
         <details className="card lg:hidden">
           <summary className="cursor-pointer font-medium">{tp("sentences")}</summary>
           <div className="mt-2 max-h-72 overflow-auto">
-            <SentenceList texts={sentences.map((x) => x.text)} current={i} marks={marks} onSelect={go} />
+            <SentenceList texts={sentences.map((x) => x.text)} current={i} marks={marks} hideText={!showSubs} hiddenLabel={(n) => tp("sentenceN", { n })} onSelect={go} />
           </div>
         </details>
 
@@ -172,7 +187,7 @@ export function Shadowing({ lessonId, sentences, audioUrl, initialRecs }: { less
 
       <aside className="card hidden max-h-[calc(100vh-8rem)] overflow-auto lg:sticky lg:top-4 lg:block">
         <h2 className="mb-2 px-2">{tp("sentences")}</h2>
-        <SentenceList texts={sentences.map((x) => x.text)} current={i} marks={marks} onSelect={go} />
+        <SentenceList texts={sentences.map((x) => x.text)} current={i} marks={marks} hideText={!showSubs} hiddenLabel={(n) => tp("sentenceN", { n })} onSelect={go} />
       </aside>
     </div>
   );

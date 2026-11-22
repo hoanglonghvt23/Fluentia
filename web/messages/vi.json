@@ -5,7 +5,12 @@
   "nav": {
     "logout": "Đăng xuất",
     "admin": "Quản trị",
-    "progress": "Tiến độ"
+    "progress": "Tiến độ",
+    "lessons": "Bài học",
+    "account": "Tài khoản",
+    "signedInAs": "Đăng nhập với tên",
+    "roleAdmin": "Quản trị viên",
+    "roleUser": "Người dùng"
   },
   "login": {
     "title": "Đăng nhập",
@@ -36,7 +41,25 @@
     "uploadHint": "Tối đa 50 MB mỗi file. Cần bật worker trên máy tính để xử lý bài.",
     "url": "Link YouTube",
     "submit": "Tạo bài học",
+    "confirm": "Xác nhận tạo bài",
     "uploading": "Đang tải lên...",
+    "stepSource": "1. Nguồn bài học",
+    "stepOptions": "2. Tùy chỉnh trước khi tạo",
+    "modeTitle": "Chế độ nghe chép",
+    "modeInput": "Có ô nhập",
+    "modeInputDesc": "Gõ lại những gì nghe được, hệ thống kiểm tra đúng sai và chấm điểm.",
+    "modeListen": "Không có ô nhập",
+    "modeListenDesc": "Chỉ nghe, không gõ. Phụ đề hiện sẵn để bạn đối chiếu.",
+    "limitsTitle": "Lượng bài",
+    "maxSentences": "Số câu tối đa",
+    "maxWords": "Tổng số chữ tối đa",
+    "unlimited": "Không giới hạn",
+    "limitsHint": "Chỉ lấy các câu đầu cho tới khi chạm một trong hai giới hạn. Để trống để lấy cả bài.",
+    "lengthTitle": "Độ dài mỗi câu",
+    "sentenceMax": "Tối đa (ký tự)",
+    "sentenceMin": "Tối thiểu (ký tự)",
+    "errLimits": "Số câu và số chữ phải là số nguyên dương, hoặc để trống.",
+    "errLength": "Độ dài câu không hợp lệ (tối thiểu không vượt quá tối đa, tối đa 400).",
     "errNoFile": "Hãy chọn một file video hoặc âm thanh.",
     "errTooBig": "File quá lớn (tối đa 50 MB).",
     "errUrl": "Link YouTube không hợp lệ."
@@ -55,10 +78,14 @@
     "deleteConfirm": "Xóa bài học này cùng toàn bộ lịch sử và bản ghi âm?"
   },
   "practice": {
-    "sentences": "Danh sách câu"
+    "sentences": "Danh sách câu",
+    "sentenceN": "Câu {n}"
   },
   "editor": {
-    "options": "Tùy chọn tách câu",
+    "maxSentences": "Số câu tối đa",
+    "maxWords": "Tổng số chữ tối đa",
+    "unlimited": "Không giới hạn",
+    "options": "Tùy chọn tách câu và giới hạn bài",
     "maxChars": "Độ dài câu tối đa (ký tự)",
     "minChars": "Độ dài câu tối thiểu",
     "regen": "Tách lại từ phụ đề",
@@ -74,6 +101,8 @@
     "saved": "Đã lưu"
   },
   "dictation": {
+    "inputToggle": "Ô nhập",
+    "subsToggle": "Phụ đề",
     "title": "Dictation",
     "settings": "Cài đặt phát",
     "speed": "Tốc độ",
@@ -90,6 +119,7 @@
     "empty": "Bài này chưa có câu nào."
   },
   "shadowing": {
+    "subsToggle": "Phụ đề",
     "title": "Shadowing",
     "progress": "Câu {n} / {total}",
     "playOriginal": "Nghe bản gốc",

@@ -3,11 +3,12 @@
 import { useTranslations } from "next-intl";
 import { useRef, useState, useTransition } from "react";
 import { playSegment } from "@/lib/audio";
+import type { LessonSettings } from "@/lib/lessonSettings";
 import { regenerateSentences, saveSentences, type SentenceRow } from "@/app/lessons/actions";
 
 type Row = SentenceRow & { key: string };
 
-export function SentenceEditor({ lessonId, initial, audioUrl }: { lessonId: string; initial: SentenceRow[]; audioUrl: string }) {
+export function SentenceEditor({ lessonId, initial, audioUrl, settings }: { lessonId: string; initial: SentenceRow[]; audioUrl: string; settings: LessonSettings }) {
   const t = useTranslations("editor");
   const [rows, setRows] = useState<Row[]>(() => initial.map((r) => ({ ...r, key: r.id ?? crypto.randomUUID() })));
   const [pending, start] = useTransition();
@@ -47,7 +48,7 @@ export function SentenceEditor({ lessonId, initial, audioUrl }: { lessonId: stri
     setRows((rs) => [...rs.slice(0, i), left, right, ...rs.slice(i + 1)]);
   };
 
-  const num = "field !min-h-10 !w-24 !px-2 !py-1 text-sm";
+  const num = "field !min-h-10 !w-32 !px-2 !py-1 text-sm";
   const icon = "btn btn-sm !px-3";
 
   return (
@@ -62,16 +63,22 @@ export function SentenceEditor({ lessonId, initial, audioUrl }: { lessonId: stri
           className="mt-3 flex flex-wrap items-end gap-3"
         >
           <label className="flex flex-col gap-1">{t("maxChars")}
-            <input name="maxChars" type="number" defaultValue={140} min={20} max={400} className={num} />
+            <input name="sentenceMax" type="number" defaultValue={settings.sentenceMax} min={20} max={400} className={num} />
           </label>
           <label className="flex flex-col gap-1">{t("minChars")}
-            <input name="minChars" type="number" defaultValue={30} min={0} max={400} className={num} />
+            <input name="sentenceMin" type="number" defaultValue={settings.sentenceMin} min={0} max={400} className={num} />
+          </label>
+          <label className="flex flex-col gap-1">{t("maxSentences")}
+            <input name="maxSentences" type="number" defaultValue={settings.maxSentences ?? ""} min={1} placeholder={t("unlimited")} className={num} />
+          </label>
+          <label className="flex flex-col gap-1">{t("maxWords")}
+            <input name="maxWords" type="number" defaultValue={settings.maxWords ?? ""} min={1} placeholder={t("unlimited")} className={num} />
           </label>
           <button className="btn btn-sm" disabled={pending}>{t("regen")}</button>
         </form>
       </details>
 
-      <ol className="flex flex-col gap-3">
+      <ol className="grid gap-3 xl:grid-cols-2">
         {rows.map((r, i) => (
           <li key={r.key} className="card">
             <div className="mb-2 flex flex-wrap items-center gap-2">

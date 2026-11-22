@@ -62,7 +62,10 @@ h2 { font-size: 1.25rem; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* Bố cục trang: một cột, hai lề bằng nhau. */
-.page { width: 100%; max-width: 64rem; margin-inline: auto; padding: 2rem 1rem 3rem; flex: 1; }
+/* Khung rộng gần hết màn hình (tối đa 100rem), lề hai bên nhỏ và bằng nhau. */
+.shell { width: 100%; max-width: 100rem; margin-inline: auto; padding-inline: 1rem; }
+.page { width: 100%; max-width: 100rem; margin-inline: auto; padding: 2rem 1rem 3rem; flex: 1; }
+@media (min-width: 768px) { .shell, .page { padding-inline: 2rem; } }
 .page-narrow { max-width: 26rem; }
 
 .muted { color: var(--muted); }
@@ -109,6 +112,22 @@ h2 { font-size: 1.25rem; }
 }
 .sentence-item:hover { background: var(--accent-soft); }
 .sentence-item[aria-current="true"] { background: var(--accent-soft); border-color: var(--accent); }
+
+.navlink { padding: 0.4rem 0.7rem; border-radius: 999px; font-size: 0.95rem; color: var(--muted); }
+.navlink:hover { background: var(--accent-soft); color: var(--foreground); }
+
+/* Biểu tượng người dùng và bảng thông tin. */
+.avatar {
+  display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px;
+  border-radius: 50%; border: 1px solid var(--line); background: var(--accent-soft); color: var(--accent);
+  cursor: pointer; transition: border-color 0.15s;
+}
+.avatar:hover, .avatar[aria-expanded="true"] { border-color: var(--accent); }
+.menu-panel {
+  position: absolute; right: 0; top: calc(100% + 0.5rem); z-index: 20; min-width: 15rem; padding: 1rem;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+}
 
 /* Ô nhập. */
 .field {

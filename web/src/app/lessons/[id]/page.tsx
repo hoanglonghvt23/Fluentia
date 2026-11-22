@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { LessonActions } from "@/components/LessonActions";
 import { SentenceEditor } from "@/components/SentenceEditor";
+import { readSettings } from "@/lib/lessonSettings";
 import { generateSentences } from "@/lib/sentences";
 import { createClient } from "@/lib/supabase/server";
 
@@ -40,6 +41,7 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
         </div>
         <SentenceEditor
           lessonId={id}
+          settings={readSettings(lesson.settings)}
           audioUrl={signed?.signedUrl ?? ""}
           initial={(sentences ?? []).map((s) => ({ id: s.id, text: s.text, start: s.start_sec, end: s.end_sec }))}
         />

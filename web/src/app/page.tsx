@@ -19,12 +19,12 @@ export default async function Home() {
       {busy && <AutoRefresh />}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h1>{t("hello", { username: me.username })}</h1>
-        <Link href="/lessons/new" className="btn btn-primary">{t("newLesson")}</Link>
+        <Link href="/lessons/new" className="btn btn-primary"><span aria-hidden className="text-xl leading-none">+</span> {t("newLesson")}</Link>
       </div>
       {!lessons?.length ? (
         <p className="muted">{t("empty")}</p>
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2">
+        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {lessons.map((l) => (
             <li key={l.id}>
               <Link href={`/lessons/${l.id}`} className="card card-link flex items-center justify-between gap-3">

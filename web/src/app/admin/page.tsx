@@ -24,14 +24,18 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         </p>
       )}
 
+      <div className="grid items-start gap-8 lg:grid-cols-2">
+      <section>
       <h2 className="mb-3">{t("create")}</h2>
       <form action={createUser} className="card mb-2 flex flex-col gap-3 sm:flex-row">
         <input name="username" placeholder="username" required autoCapitalize="none" className={`${input} flex-1`} />
         <input name="password" type="password" placeholder="password" required autoComplete="new-password" className={`${input} flex-1`} />
         <button className={btn}>{t("save")}</button>
       </form>
-      <p className="muted mb-8 text-xs">{t("hint")}</p>
+      <p className="muted text-xs">{t("hint")}</p>
+      </section>
 
+      <section>
       <h2 className="mb-3">{t("users")}</h2>
       <ul className="flex flex-col gap-3">
         {users?.map((u) => (
@@ -45,6 +49,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           </li>
         ))}
       </ul>
+      </section>
+      </div>
     </main>
   );
 }

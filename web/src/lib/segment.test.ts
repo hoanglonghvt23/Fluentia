@@ -1,6 +1,15 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { segment } from "./segment.ts";
+import { limitSentences, segment } from "./segment.ts";
+
+test("giới hạn số câu và tổng số chữ", () => {
+  const list = ["one two three", "four five", "six seven eight nine", "ten"].map((text, i) => ({ start: i, end: i + 1, text }));
+  assert.equal(limitSentences(list, {}).length, 4);
+  assert.equal(limitSentences(list, { maxSentences: 2 }).length, 2);
+  assert.equal(limitSentences(list, { maxWords: 6 }).length, 2); // 3 + 2 = 5, câu thứ ba làm vượt 6
+  assert.equal(limitSentences(list, { maxWords: 1 }).length, 1); // luôn giữ câu đầu
+  assert.equal(limitSentences(list, { maxSentences: 3, maxWords: 100 }).length, 3);
+});
 
 test("tách theo dấu kết câu và giữ mốc thời gian", () => {
   const s = segment([

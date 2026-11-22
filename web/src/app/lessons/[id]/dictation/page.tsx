@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Dictation } from "@/components/Dictation";
+import { readSettings } from "@/lib/lessonSettings";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function DictationPage({ params }: { params: Promise<{ id: string }> }) {
@@ -9,7 +10,7 @@ export default async function DictationPage({ params }: { params: Promise<{ id: 
   const supabase = await createClient();
   const t = await getTranslations("dictation");
 
-  const { data: lesson } = await supabase.from("lessons").select("title, status, audio_path").eq("id", id).maybeSingle();
+  const { data: lesson } = await supabase.from("lessons").select("title, status, audio_path, settings").eq("id", id).maybeSingle();
   if (!lesson || lesson.status !== "ready") notFound();
 
   const [{ data: sentences }, { data: last }, { data: signed }] = await Promise.all([
@@ -28,6 +29,7 @@ export default async function DictationPage({ params }: { params: Promise<{ id: 
         lessonId={id}
         audioUrl={signed?.signedUrl ?? ""}
         startAt={startAt}
+        showInput={readSettings(lesson.settings).showInput}
         sentences={(sentences ?? []).map((s) => ({ id: s.id, text: s.text, start: s.start_sec, end: s.end_sec }))}
       />
     </main>

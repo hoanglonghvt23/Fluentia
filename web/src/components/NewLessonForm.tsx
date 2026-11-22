@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { DEFAULT_SETTINGS, posInt, type LessonSettings } from "@/lib/lessonSettings";
 import { createClient } from "@/lib/supabase/browser";
 
 const MAX_BYTES = 50 * 1024 * 1024; // giới hạn file của gói Supabase Free
@@ -11,6 +12,7 @@ export function NewLessonForm() {
   const t = useTranslations("newLesson");
   const router = useRouter();
   const [mode, setMode] = useState<"upload" | "youtube">("upload");
+  const [showInput, setShowInput] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -28,6 +30,18 @@ export function NewLessonForm() {
     if (subs && subs.size > MAX_BYTES) return setError(t("errTooBig"));
     if (mode === "youtube" && !/^https?:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\//i.test(url)) return setError(t("errUrl"));
 
+    // Ô để trống = không giới hạn; ô có giá trị phải là số nguyên dương.
+    const raw = (k: string) => String(form.get(k) ?? "").trim();
+    for (const k of ["maxSentences", "maxWords"]) if (raw(k) && !posInt(raw(k))) return setError(t("errLimits"));
+    const sentenceMax = posInt(raw("sentenceMax")) ?? DEFAULT_SETTINGS.sentenceMax;
+    const sentenceMin = Math.max(0, Math.floor(Number(raw("sentenceMin")) || 0));
+    if (sentenceMin > sentenceMax || sentenceMax > 400) return setError(t("errLength"));
+    const settings: LessonSettings = {
+      sentenceMax, sentenceMin, showInput,
+      maxSentences: posInt(raw("maxSentences")),
+      maxWords: posInt(raw("maxWords")),
+    };
+
     setBusy(true);
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -35,7 +49,7 @@ export function NewLessonForm() {
 
     const id = crypto.randomUUID();
     const dir = `${user.id}/${id}`;
-    const row: Record<string, unknown> = { id, title: title || (video?.name ?? url), source_type: mode };
+    const row: Record<string, unknown> = { id, title: title || (video?.name ?? url), source_type: mode, settings };
 
     if (mode === "upload" && video) {
       const ext = (video.name.split(".").pop() ?? "bin").toLowerCase();
@@ -57,41 +71,94 @@ export function NewLessonForm() {
     router.push(`/lessons/${id}`);
   }
 
-  const input = "field";
   const tab = (m: typeof mode) => `btn btn-sm ${mode === m ? "btn-primary" : ""}`;
+  const choice = (on: boolean) => `card cursor-pointer ${on ? "!border-[var(--accent)] bg-[var(--accent-soft)]" : ""}`;
 
   return (
-    <form onSubmit={onSubmit} className="card flex flex-col gap-4">
-      <div className="flex gap-2">
-        <button type="button" className={tab("upload")} onClick={() => setMode("upload")}>{t("tabUpload")}</button>
-        <button type="button" className={tab("youtube")} onClick={() => setMode("youtube")}>{t("tabYoutube")}</button>
+    <form onSubmit={onSubmit} className="flex flex-col gap-6">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <section className="card flex flex-col gap-4">
+          <h2>{t("stepSource")}</h2>
+          <div className="flex gap-2">
+            <button type="button" className={tab("upload")} onClick={() => setMode("upload")}>{t("tabUpload")}</button>
+            <button type="button" className={tab("youtube")} onClick={() => setMode("youtube")}>{t("tabYoutube")}</button>
+          </div>
+          <label className="flex flex-col gap-1 text-sm">
+            {t("title")}
+            <input name="title" className="field" />
+          </label>
+          {mode === "upload" ? (
+            <>
+              <label className="flex flex-col gap-1 text-sm">
+                {t("video")}
+                <input name="video" type="file" accept="video/*,audio/*" className="field" />
+              </label>
+              <label className="flex flex-col gap-1 text-sm">
+                {t("subs")}
+                <input name="subs" type="file" accept=".srt,.vtt" className="field" />
+              </label>
+              <p className="muted text-xs">{t("uploadHint")}</p>
+            </>
+          ) : (
+            <label className="flex flex-col gap-1 text-sm">
+              {t("url")}
+              <input name="url" type="url" placeholder="https://www.youtube.com/watch?v=..." className="field" />
+            </label>
+          )}
+        </section>
+
+        <section className="card flex flex-col gap-5">
+          <h2>{t("stepOptions")}</h2>
+
+          <fieldset className="flex flex-col gap-2">
+            <legend className="mb-2 text-sm font-medium">{t("modeTitle")}</legend>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className={choice(showInput)}>
+                <input type="radio" name="mode" className="sr-only" checked={showInput} onChange={() => setShowInput(true)} />
+                <span className="block font-medium">{t("modeInput")}</span>
+                <span className="muted block text-sm">{t("modeInputDesc")}</span>
+              </label>
+              <label className={choice(!showInput)}>
+                <input type="radio" name="mode" className="sr-only" checked={!showInput} onChange={() => setShowInput(false)} />
+                <span className="block font-medium">{t("modeListen")}</span>
+                <span className="muted block text-sm">{t("modeListenDesc")}</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset className="flex flex-col gap-2">
+            <legend className="mb-1 text-sm font-medium">{t("limitsTitle")}</legend>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="flex flex-col gap-1 text-sm">{t("maxSentences")}
+                <input name="maxSentences" type="number" min={1} inputMode="numeric" placeholder={t("unlimited")} className="field" />
+              </label>
+              <label className="flex flex-col gap-1 text-sm">{t("maxWords")}
+                <input name="maxWords" type="number" min={1} inputMode="numeric" placeholder={t("unlimited")} className="field" />
+              </label>
+            </div>
+            <p className="muted text-xs">{t("limitsHint")}</p>
+          </fieldset>
+
+          <fieldset className="flex flex-col gap-2">
+            <legend className="mb-1 text-sm font-medium">{t("lengthTitle")}</legend>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="flex flex-col gap-1 text-sm">{t("sentenceMax")}
+                <input name="sentenceMax" type="number" min={20} max={400} defaultValue={DEFAULT_SETTINGS.sentenceMax} className="field" />
+              </label>
+              <label className="flex flex-col gap-1 text-sm">{t("sentenceMin")}
+                <input name="sentenceMin" type="number" min={0} max={400} defaultValue={DEFAULT_SETTINGS.sentenceMin} className="field" />
+              </label>
+            </div>
+          </fieldset>
+        </section>
       </div>
-      <label className="flex flex-col gap-1 text-sm">
-        {t("title")}
-        <input name="title" className={input} />
-      </label>
-      {mode === "upload" ? (
-        <>
-          <label className="flex flex-col gap-1 text-sm">
-            {t("video")}
-            <input name="video" type="file" accept="video/*,audio/*" className={input} />
-          </label>
-          <label className="flex flex-col gap-1 text-sm">
-            {t("subs")}
-            <input name="subs" type="file" accept=".srt,.vtt" className={input} />
-          </label>
-          <p className="muted text-xs">{t("uploadHint")}</p>
-        </>
-      ) : (
-        <label className="flex flex-col gap-1 text-sm">
-          {t("url")}
-          <input name="url" type="url" placeholder="https://www.youtube.com/watch?v=..." className={input} />
-        </label>
-      )}
+
       {error && <p className="msg-err text-sm">{error}</p>}
-      <button disabled={busy} className="btn btn-primary">
-        {busy ? t("uploading") : t("submit")}
-      </button>
+      <div className="flex justify-end">
+        <button disabled={busy} className="btn btn-primary btn-lg">
+          {busy ? t("uploading") : t("confirm")}
+        </button>
+      </div>
     </form>
   );
 }

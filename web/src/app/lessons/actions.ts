@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { readSettings } from "@/lib/lessonSettings";
 import { generateSentences } from "@/lib/sentences";
 
 export type SentenceRow = { id?: string; text: string; start: number; end: number };
@@ -32,10 +33,23 @@ export async function saveSentences(lessonId: string, rows: SentenceRow[]) {
   revalidatePath(`/lessons/${lessonId}`);
 }
 
+// Lưu tùy chỉnh mới vào bài rồi tách lại câu theo đó.
 export async function regenerateSentences(lessonId: string, formData: FormData) {
-  const maxChars = Math.min(400, Math.max(20, Number(formData.get("maxChars")) || 140));
-  const minChars = Math.min(maxChars, Math.max(0, Number(formData.get("minChars") ?? 30) || 0));
-  await generateSentences(await createClient(), lessonId, { maxChars, minChars });
+  const supabase = await createClient();
+  const { data: lesson, error } = await supabase.from("lessons").select("settings").eq("id", lessonId).single();
+  if (error) throw new Error(error.message);
+
+  const settings = readSettings({
+    ...readSettings(lesson.settings),
+    sentenceMax: formData.get("sentenceMax"),
+    sentenceMin: formData.get("sentenceMin"),
+    maxSentences: formData.get("maxSentences"),
+    maxWords: formData.get("maxWords"),
+  });
+  const upd = await supabase.from("lessons").update({ settings }).eq("id", lessonId);
+  if (upd.error) throw new Error(upd.error.message);
+
+  await generateSentences(supabase, lessonId);
   revalidatePath(`/lessons/${lessonId}`);
 }
 

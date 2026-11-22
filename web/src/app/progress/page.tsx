@@ -31,8 +31,10 @@ export default async function ProgressPage() {
     <main className="page">
       <h1 className="mb-6">{t("title")}</h1>
 
+      <div className="grid items-start gap-8 lg:grid-cols-2">
+      <section>
       <h2 className="mb-3">{t("byLesson")}</h2>
-      <ul className="mb-8 flex flex-col gap-3">
+      <ul className="flex flex-col gap-3">
         {rows.map((r) => (
           <li key={r.id} className="card">
             <Link href={`/lessons/${r.id}`} className="font-medium">{r.title}</Link>
@@ -45,6 +47,8 @@ export default async function ProgressPage() {
         {!rows.length && <li className="muted">{t("empty")}</li>}
       </ul>
 
+      </section>
+      <section>
       <h2 className="mb-3">{t("history")}</h2>
       <ul className="flex flex-col gap-3">
         {all.slice(0, 30).map((a, k) => (
@@ -57,6 +61,8 @@ export default async function ProgressPage() {
           </li>
         ))}
       </ul>
+      </section>
+      </div>
     </main>
   );
 }
