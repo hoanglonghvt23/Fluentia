@@ -2,7 +2,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { segment, type Cue, type SegmentOptions } from "./segment";
 
 // Tách lại câu từ phụ đề thô của bài học và thay toàn bộ câu hiện có.
-export async function generateSentences(supabase: SupabaseClient, lessonId: string, opts: SegmentOptions = {}) {
+// Mặc định minChars 30: tránh câu chỉ 2-3 chữ (nhất là lời hát, thoại ngắt quãng).
+export async function generateSentences(supabase: SupabaseClient, lessonId: string, opts: SegmentOptions = { maxChars: 140, minChars: 30 }) {
   const { data: lesson, error } = await supabase.from("lessons").select("cues").eq("id", lessonId).single();
   if (error) throw new Error(error.message);
   const cues = (lesson.cues ?? []) as Cue[];

@@ -34,6 +34,19 @@ def test_words_to_cues():
     print("words_to_cues OK")
 
 
+def test_fill_gaps():
+    from types import SimpleNamespace as W
+
+    main = [W(word=" a", start=20.0, end=20.5), W(word=" b", start=21.0, end=21.5),
+            W(word=" c", start=30.0, end=30.5)]  # khoảng trống đầu 0-20 và giữa 21.5-30
+    fill = [W(word=" intro", start=7.0, end=8.0), W(word=" mid", start=25.0, end=26.0),
+            W(word=" noise", start=20.6, end=20.9)]  # noise nằm trong khoảng ngắn (0.5 giây): bỏ
+    out = [w.word.strip() for w in media.fill_gaps(main, fill)]
+    assert out == ["intro", "a", "b", "mid", "c"], out
+    assert [w.word for w in media.fill_gaps([], fill)] == [w.word for w in fill]
+    print("fill_gaps OK")
+
+
 def test_media(with_whisper: bool):
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
@@ -58,4 +71,5 @@ def test_media(with_whisper: bool):
 if __name__ == "__main__":
     test_parse()
     test_words_to_cues()
+    test_fill_gaps()
     test_media(with_whisper="--whisper" in sys.argv)

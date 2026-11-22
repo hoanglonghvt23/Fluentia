@@ -19,7 +19,7 @@ def extract_audio(src: Path, out: Path) -> float:
     return float(probe.stdout.strip())
 
 
-def words_to_cues(words, max_words: int = 14, max_gap: float = 0.7) -> list[dict]:
+def words_to_cues(words, max_words: int = 14, max_gap: float = 0.5) -> list[dict]:
     """Gom từng từ (có mốc giờ riêng) thành đoạn ngắn: hết câu, nghỉ lâu, hoặc đủ số từ thì ngắt.
 
     Mốc giờ theo từ chính xác hơn nhiều so với mốc giờ của cả đoạn Whisper (đoạn có thể dài 30-50 giây).
@@ -44,22 +44,52 @@ def words_to_cues(words, max_words: int = 14, max_gap: float = 0.7) -> list[dict
     return cues
 
 
+def fill_gaps(main: list, fill: list, min_gap: float = 4.0) -> list:
+    """Vá lượt nhận dạng chính bằng từ của lượt phụ, chỉ ở những khoảng trống dài (>= min_gap giây).
+
+    Lượt chính hay bỏ sót đoạn đầu có nhạc nền; lượt phụ (VAD nhẹ) nghe được nhưng kém chính xác ở chỗ khác,
+    nên chỉ lấy từ của nó ở nơi lượt chính không có gì.
+    """
+    if not main:
+        return list(fill)
+    edges = [(None, main[0].start)] + [(a.end, b.start) for a, b in zip(main, main[1:])]
+    out = list(main)
+    for lo, hi in edges:
+        if hi - (lo if lo is not None else 0.0) >= min_gap:
+            lo = 0.0 if lo is None else lo
+            out += [w for w in fill if w.start >= lo - 0.1 and w.end <= hi + 0.1]
+    return sorted(out, key=lambda w: w.start)
+
+
+def _run(audio: Path, **options) -> list:
+    """Một lượt Whisper, trả về danh sách từ có mốc giờ. Bỏ đoạn mà Whisper tự chấm là nhiễu (hay ra chữ 'You')."""
+    segments, _ = _model.transcribe(
+        str(audio), language="en", word_timestamps=True, condition_on_previous_text=False, **options
+    )
+    return [
+        w for s in segments
+        if not (s.no_speech_prob > 0.8 and s.avg_logprob < -0.7)
+        for w in (s.words or [])
+    ]
+
+
 def transcribe(audio: Path) -> list[dict]:
-    """Nhận dạng tiếng Anh bằng faster-whisper (tải model lần đầu, khoảng 500 MB)."""
+    """Nhận dạng tiếng Anh bằng faster-whisper (tải model lần đầu, khoảng 500 MB).
+
+    Hai lượt: (1) tắt VAD, vì VAD mặc định nhầm giọng hát có nhạc nền là im lặng và bỏ mất hơn nửa số chữ;
+    (2) VAD nhẹ để vá các khoảng trống dài của lượt 1 (thường là đoạn mở đầu).
+    """
     global _model
     if _model is None:
         from faster_whisper import WhisperModel
 
         _model = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8")
-    # word_timestamps: mốc giờ từng từ. condition_on_previous_text=False: tránh lặp và trôi mốc ở đoạn dài.
-    segments, _ = _model.transcribe(
-        str(audio), language="en", vad_filter=True, word_timestamps=True, condition_on_previous_text=False
+    main = _run(audio, vad_filter=False, no_speech_threshold=None, log_prob_threshold=None)
+    fill = _run(
+        audio, vad_filter=True,
+        vad_parameters={"threshold": 0.25, "min_silence_duration_ms": 1500, "speech_pad_ms": 500},
     )
-    segments = list(segments)
-    words = [w for s in segments for w in (s.words or [])]
-    if words:
-        return words_to_cues(words)
-    return [{"start": s.start, "end": s.end, "text": s.text.strip()} for s in segments if s.text.strip()]
+    return words_to_cues(fill_gaps(main, fill))
 
 
 def download_youtube(url: str, workdir: Path) -> tuple[Path, Path | None, str]:

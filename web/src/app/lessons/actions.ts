@@ -34,7 +34,7 @@ export async function saveSentences(lessonId: string, rows: SentenceRow[]) {
 
 export async function regenerateSentences(lessonId: string, formData: FormData) {
   const maxChars = Math.min(400, Math.max(20, Number(formData.get("maxChars")) || 140));
-  const minChars = Math.min(maxChars, Math.max(0, Number(formData.get("minChars")) || 0));
+  const minChars = Math.min(maxChars, Math.max(0, Number(formData.get("minChars") ?? 30) || 0));
   await generateSentences(await createClient(), lessonId, { maxChars, minChars });
   revalidatePath(`/lessons/${lessonId}`);
 }

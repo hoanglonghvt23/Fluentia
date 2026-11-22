@@ -65,7 +65,7 @@ export function SentenceEditor({ lessonId, initial, audioUrl }: { lessonId: stri
             <input name="maxChars" type="number" defaultValue={140} min={20} max={400} className={num} />
           </label>
           <label className="flex flex-col gap-1">{t("minChars")}
-            <input name="minChars" type="number" defaultValue={0} min={0} max={400} className={num} />
+            <input name="minChars" type="number" defaultValue={30} min={0} max={400} className={num} />
           </label>
           <button className="btn btn-sm" disabled={pending}>{t("regen")}</button>
         </form>
