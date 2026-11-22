@@ -54,7 +54,7 @@
     "maxSentences": "Max sentences",
     "maxWords": "Max total words",
     "unlimited": "No limit",
-    "limitsHint": "Keeps the first sentences until one of the limits is reached. Leave empty to keep the whole lesson.",
+    "limitsHint": "Suggestion: 20 sentences or 300 words is enough for one session. Keeps the first sentences until one of the limits is reached. Clear a box to keep the whole lesson.",
     "lengthTitle": "Sentence length",
     "sentenceMax": "Max (characters)",
     "sentenceMin": "Min (characters)",

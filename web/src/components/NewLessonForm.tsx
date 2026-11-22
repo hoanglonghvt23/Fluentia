@@ -7,6 +7,9 @@ import { DEFAULT_SETTINGS, posInt, type LessonSettings } from "@/lib/lessonSetti
 import { createClient } from "@/lib/supabase/browser";
 
 const MAX_BYTES = 50 * 1024 * 1024; // giới hạn file của gói Supabase Free
+// Gợi ý cho bài mới: đủ luyện một buổi. Xóa trống ô để lấy cả bài.
+const DEFAULT_MAX_SENTENCES = 20;
+const DEFAULT_MAX_WORDS = 300;
 
 export function NewLessonForm() {
   const t = useTranslations("newLesson");
@@ -130,10 +133,10 @@ export function NewLessonForm() {
             <legend className="mb-1 text-sm font-medium">{t("limitsTitle")}</legend>
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="flex flex-col gap-1 text-sm">{t("maxSentences")}
-                <input name="maxSentences" type="number" min={1} inputMode="numeric" placeholder={t("unlimited")} className="field" />
+                <input name="maxSentences" type="number" min={1} inputMode="numeric" defaultValue={DEFAULT_MAX_SENTENCES} placeholder={t("unlimited")} className="field" />
               </label>
               <label className="flex flex-col gap-1 text-sm">{t("maxWords")}
-                <input name="maxWords" type="number" min={1} inputMode="numeric" placeholder={t("unlimited")} className="field" />
+                <input name="maxWords" type="number" min={1} inputMode="numeric" defaultValue={DEFAULT_MAX_WORDS} placeholder={t("unlimited")} className="field" />
               </label>
             </div>
             <p className="muted text-xs">{t("limitsHint")}</p>

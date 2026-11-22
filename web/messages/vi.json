@@ -54,7 +54,7 @@
     "maxSentences": "Số câu tối đa",
     "maxWords": "Tổng số chữ tối đa",
     "unlimited": "Không giới hạn",
-    "limitsHint": "Chỉ lấy các câu đầu cho tới khi chạm một trong hai giới hạn. Để trống để lấy cả bài.",
+    "limitsHint": "Gợi ý: 20 câu hoặc 300 chữ là đủ cho một buổi luyện. Chỉ lấy các câu đầu cho tới khi chạm một trong hai giới hạn. Xóa trống ô để lấy cả bài.",
     "lengthTitle": "Độ dài mỗi câu",
     "sentenceMax": "Tối đa (ký tự)",
     "sentenceMin": "Tối thiểu (ký tự)",
