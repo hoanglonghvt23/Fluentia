@@ -5,6 +5,7 @@ import { AutoRefresh } from "@/components/AutoRefresh";
 import { DownloadZipButton } from "@/components/DownloadZipButton";
 import { LessonActions } from "@/components/LessonActions";
 import { SentenceEditor } from "@/components/SentenceEditor";
+import { isYoutubeBlocked } from "@/lib/lessonError";
 import { readSettings } from "@/lib/lessonSettings";
 import { generateSentences } from "@/lib/sentences";
 import { createClient } from "@/lib/supabase/server";
@@ -49,7 +50,9 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
       </>
     );
   } else if (lesson.status === "error") {
-    body = <p className="msg-err">{t("failed")}: {lesson.error}</p>;
+    body = isYoutubeBlocked(lesson.error)
+      ? <p className="msg-err">{t("youtubeBlocked")}</p>
+      : <p className="msg-err">{t("failed")}: {lesson.error}</p>;
   } else {
     body = <p className="muted">{t(lesson.status === "queued" ? "queued" : "processing")}</p>;
   }

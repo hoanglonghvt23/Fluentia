@@ -33,7 +33,13 @@
     "failed": "Could not download \"{title}\". It was kept.",
     "retry": "Try again"
   },
-"login": {
+  "notify": {
+    "ready": "Lesson \"{title}\" has finished processing and is ready to practice.",
+    "failed": "Lesson \"{title}\" failed to process. {error}",
+    "failedYoutube": "Lesson \"{title}\" could not be downloaded from YouTube because YouTube is blocking the processing server. Download the video yourself and use \"Upload file\".",
+    "workerOff": "A lesson has been waiting for more than 5 minutes. The processing server may be busy or failing, please try again in a few minutes."
+  },
+  "login": {
     "title": "Log in",
     "username": "Username",
     "password": "Password",
@@ -62,6 +68,7 @@
     }
   },
   "newLesson": {
+    "youtubeHint": "YouTube may block automatic downloads. If the lesson fails, download the video to your computer and use the \"Upload file\" tab.",
     "heading": "Create a new lesson",
     "tabUpload": "Upload file",
     "tabYoutube": "YouTube link",
@@ -91,6 +98,7 @@
     "errUrl": "Invalid YouTube link."
   },
   "lesson": {
+    "youtubeBlocked": "Could not download the video from YouTube because YouTube is blocking the processing server. Download the video to your computer and recreate this lesson with the \"Upload file\" tab.",
     "dictation": "Dictation",
     "shadowing": "Shadowing",
     "queued": "Waiting for the worker. Start the worker on the computer.",

@@ -105,6 +105,7 @@ export function NewLessonForm() {
             <label className="flex flex-col gap-1 text-sm">
               {t("url")}
               <input name="url" type="url" placeholder="https://www.youtube.com/watch?v=..." className="field" />
+              <span className="muted text-xs">{t("youtubeHint")}</span>
             </label>
           )}
         </section>

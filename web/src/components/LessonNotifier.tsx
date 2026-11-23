@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { isYoutubeBlocked } from "@/lib/lessonError";
 import { useDialog } from "./DialogProvider";
 
 type L = { id: string; title: string; status: string; error: string | null; created_at: string };
@@ -26,7 +27,9 @@ export function LessonNotifier({ lessons }: { lessons: L[] }) {
     for (const l of lessons) {
       if (!BUSY.has(before.get(l.id) ?? "")) continue;
       if (l.status === "ready") toast(t("ready", { title: l.title }), "ok");
-      else if (l.status === "error") toast(t("failed", { title: l.title, error: l.error ?? "" }), "error");
+      else if (l.status === "error") {
+        toast(isYoutubeBlocked(l.error) ? t("failedYoutube", { title: l.title }) : t("failed", { title: l.title, error: l.error ?? "" }), "error");
+      }
     }
   }, [lessons, t, toast]);
 

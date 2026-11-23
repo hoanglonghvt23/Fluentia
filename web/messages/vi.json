@@ -33,7 +33,13 @@
     "failed": "Không tải được bài \"{title}\". Bài này vẫn được giữ lại.",
     "retry": "Thử lại"
   },
-"login": {
+  "notify": {
+    "ready": "Bài \"{title}\" đã xử lý xong, sẵn sàng để luyện.",
+    "failed": "Bài \"{title}\" xử lý thất bại. {error}",
+    "failedYoutube": "Bài \"{title}\" không tải được từ YouTube vì YouTube đang chặn máy chủ xử lý. Hãy tải video về máy rồi dùng \"Tải file lên\".",
+    "workerOff": "Có bài đã chờ hơn 5 phút mà chưa được xử lý. Có thể máy chủ xử lý đang bận hoặc bị lỗi, hãy thử lại sau ít phút."
+  },
+  "login": {
     "title": "Đăng nhập",
     "username": "Tên đăng nhập",
     "password": "Mật khẩu",
@@ -62,6 +68,7 @@
     }
   },
   "newLesson": {
+    "youtubeHint": "YouTube có thể chặn việc tải video tự động. Nếu bài báo lỗi, hãy tải video về máy rồi dùng tab \"Tải file lên\".",
     "heading": "Tạo bài học mới",
     "tabUpload": "Tải file lên",
     "tabYoutube": "Link YouTube",
@@ -91,6 +98,7 @@
     "errUrl": "Link YouTube không hợp lệ."
   },
   "lesson": {
+    "youtubeBlocked": "Không tải được video từ YouTube vì YouTube đang chặn máy chủ xử lý. Hãy tải video về máy rồi dùng tab \"Tải file lên\" để tạo lại bài này.",
     "dictation": "Dictation (nghe chép)",
     "shadowing": "Shadowing (nhại theo)",
     "queued": "Bài đang chờ worker xử lý. Hãy bật worker trên máy tính.",
