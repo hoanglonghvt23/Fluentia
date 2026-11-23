@@ -24,7 +24,7 @@
     "bannerTitle": "System storage is almost full",
     "bannerBody": "Please download {n, plural, one {# lesson} other {# lessons}} to your computer before {date}. After that, you will have to download all lessons before you can continue, and downloaded lessons are removed from the system.",
     "downloadAll": "Download {n, plural, one {# lesson} other {# lessons}}",
-    "confirm": "Download {n, plural, one {# lesson} other {# lessons}} to your computer? Each lesson is a zip file starting with \"Fluteria\" and is removed from the system after downloading.",
+    "confirm": "Download {n, plural, one {# lesson} other {# lessons}} to your computer? Each lesson is a zip file starting with \"Fluentia\" and is removed from the system after downloading.",
     "overdueTitle": "Deadline passed: download your lessons",
     "overdueBody": "System storage is still full. You need to download {n, plural, one {# lesson} other {# lessons}} to your computer. Each lesson is a zip file and is removed from the system after downloading. You can import it again with \"Import from zip\".",
     "multipleHint": "If the browser asks to allow multiple downloads, choose Allow.",

@@ -93,7 +93,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
   return new NextResponse(new Blob([zip as BlobPart], { type: "application/zip" }), {
     headers: {
-      "Content-Disposition": `attachment; filename="Fluteria_lesson.zip"; filename*=UTF-8''${encodeURIComponent(zipFileName(lesson.title))}`,
+      "Content-Disposition": `attachment; filename="Fluentia_lesson.zip"; filename*=UTF-8''${encodeURIComponent(zipFileName(lesson.title))}`,
       "Cache-Control": "no-store",
     },
   });

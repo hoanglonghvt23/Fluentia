@@ -21,7 +21,7 @@ const heading = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Fluteria",
+  title: "Fluentia",
   description: "Luyện tiếng Anh: Dictation và Shadowing",
 };
 

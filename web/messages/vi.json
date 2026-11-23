@@ -24,7 +24,7 @@
     "bannerTitle": "Dung lượng hệ thống sắp đầy",
     "bannerBody": "Hãy tải {n, plural, other {# bài học}} về máy trước {date}. Sau hạn này, bạn sẽ phải tải toàn bộ bài về máy mới dùng tiếp được, và các bài đã tải sẽ bị xóa khỏi hệ thống.",
     "downloadAll": "Tải {n, plural, other {# bài}} về máy",
-    "confirm": "Tải {n, plural, other {# bài học}} về máy? Mỗi bài là một file zip bắt đầu bằng \"Fluteria\" và sẽ bị xóa khỏi hệ thống sau khi tải xong.",
+    "confirm": "Tải {n, plural, other {# bài học}} về máy? Mỗi bài là một file zip bắt đầu bằng \"Fluentia\" và sẽ bị xóa khỏi hệ thống sau khi tải xong.",
     "overdueTitle": "Đã hết hạn: cần tải bài về máy",
     "overdueBody": "Dung lượng hệ thống vẫn đầy. Bạn cần tải {n, plural, other {# bài học}} về máy. Mỗi bài là một file zip, và bài sẽ bị xóa khỏi hệ thống sau khi tải xong. Bạn có thể nhập lại bằng nút \"Nhập từ zip\".",
     "multipleHint": "Nếu trình duyệt hỏi cho phép tải nhiều file, hãy chọn Cho phép.",

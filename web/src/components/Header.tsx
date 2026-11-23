@@ -12,7 +12,7 @@ export async function Header() {
     <header className="sticky top-0 z-30 border-b border-[var(--line)] bg-[var(--background)]">
       <div className="shell flex flex-wrap items-center gap-2 py-3">
         <Link href="/" className="mr-4 font-[family-name:var(--font-heading)] text-xl font-semibold">
-          Fluteria<span className="text-[var(--accent)]">.</span>
+          Fluentia<span className="text-[var(--accent)]">.</span>
         </Link>
         {me && <Link href="/" className="navlink">{t("lessons")}</Link>}
         {me && <Link href="/progress" className="navlink">{t("progress")}</Link>}

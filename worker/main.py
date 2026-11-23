@@ -1,4 +1,4 @@
-"""Worker Fluteria: lấy bài học đang chờ từ Supabase, tách âm thanh, lấy phụ đề (hoặc Whisper), ghi kết quả.
+"""Worker Fluentia: lấy bài học đang chờ từ Supabase, tách âm thanh, lấy phụ đề (hoặc Whisper), ghi kết quả.
 
 Chạy: python main.py   (dừng bằng Ctrl+C)
       python main.py --check   (chỉ kiểm tra kết nối Supabase)

@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-# Fluteria: web luyện tiếng Anh (Dictation và Shadowing)
+# Fluentia: web luyện tiếng Anh (Dictation và Shadowing)
 
 ## Mục tiêu
 Web luyện tiếng Anh từ video, có 2 tính năng chính: Dictation (nghe chép chính tả) và Shadowing (nhại theo).
@@ -41,7 +41,7 @@ Ba phần giao tiếp qua Supabase, không gọi trực tiếp nhau:
 - **Worker chỉ ghi `lessons.cues`** (phụ đề thô `[{start,end,text}]`) và `audio_path`, rồi xóa video gốc. **Việc tách câu nằm ở web**: `lib/segment.ts` (hàm thuần, có test) biến cues thành câu, `lib/sentences.ts` ghi bảng `sentences` và áp giới hạn số câu/số chữ trong `lessons.settings` (jsonb, đọc qua `lib/lessonSettings.ts`). Mở bài ở trạng thái `ready` mà chưa có câu thì trang tự tách lần đầu. "Nhận dạng lại" = đặt `cues=null, status='queued'` trên bài đã có âm thanh; worker có nhánh riêng chỉ chạy lại Whisper.
 - **Nhận dạng giọng nói** (`worker/media.py`): hai lượt Whisper rồi ghép. Lượt chính tắt VAD (VAD mặc định làm mất hơn 60% chữ ở bài có nhạc nền); lượt phụ dùng VAD nhẹ để vá các khoảng trống dài (`fill_gaps`). Mốc giờ lấy theo từng từ rồi gom lại (`words_to_cues`). YouTube chỉ lấy phụ đề do người đăng tải, không lấy phụ đề tự động. `truststore` cho Python dùng kho chứng chỉ Windows (máy có phần mềm quét HTTPS làm hỏng chứng chỉ mặc định).
 - **Phát âm thanh**: mỗi bài một file mp3; trình duyệt nhảy theo mốc thời gian bằng `lib/audio.ts` (`playSegment`), không cắt file theo câu. URL ký sẵn hết hạn sau 3 giờ.
-- **Đăng nhập**: username ghép thành `username@fluteria.local` để dùng Supabase Auth; trigger tạo dòng `profiles` (có cột `role`). `src/proxy.ts` (tên mới của middleware trong Next 16) làm mới phiên và chuyển người chưa đăng nhập về `/login`. Mọi bảng bật RLS theo chủ sở hữu. Chỉ `lib/supabase/admin.ts` (`import "server-only"`, dùng secret key) bỏ qua RLS, và chỉ được gọi sau khi `requireAdmin()` kiểm tra vai trò (trang `/admin`).
+- **Đăng nhập**: username ghép thành `username@fluteria.local` để dùng Supabase Auth (tên miền giả này giữ nguyên dù hệ thống đã đổi tên thành Fluentia, vì đổi sẽ làm các tài khoản hiện có không đăng nhập được); trigger tạo dòng `profiles` (có cột `role`). `src/proxy.ts` (tên mới của middleware trong Next 16) làm mới phiên và chuyển người chưa đăng nhập về `/login`. Mọi bảng bật RLS theo chủ sở hữu. Chỉ `lib/supabase/admin.ts` (`import "server-only"`, dùng secret key) bỏ qua RLS, và chỉ được gọi sau khi `requireAdmin()` kiểm tra vai trò (trang `/admin`).
 - **Lịch sử và bản ghi** (`attempts`, `recordings`) lưu bản chụp chữ của câu và để `sentence_id` về null khi câu bị xóa, nên sửa hay tách lại câu không làm mất lịch sử. Bản ghi Shadowing gắn với câu gốc và `start_sec/end_sec` để chừa chỗ cho module chấm phát âm sau này.
 - **Đa ngôn ngữ**: next-intl theo cookie `locale`, không có tiền tố URL (`src/i18n/request.ts`). `messages/vi.json` và `messages/en.json` phải có đúng cùng bộ khóa; component client dùng được nhờ `NextIntlClientProvider` trong `app/layout.tsx`.
 - **Next 16**: `cacheComponents` được tắt có chủ đích, vì mọi trang đều đọc cookie đăng nhập. `web/AGENTS.md` yêu cầu đọc `node_modules/next/dist/docs/` trước khi dùng API Next vì có thay đổi lớn so với các bản trước.

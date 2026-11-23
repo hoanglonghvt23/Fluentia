@@ -1,4 +1,4 @@
-# Fluteria
+# Fluentia
 
 Web luyện tiếng Anh từ video: Dictation và Shadowing. Xem [CLAUDE.md](CLAUDE.md).
 
