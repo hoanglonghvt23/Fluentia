@@ -1,0 +1,63 @@
+name: worker
+
+# Chạy worker xử lý bài học trên máy chủ GitHub (miễn phí), không cần bật máy cá nhân.
+# - workflow_dispatch: web gọi ngay khi có bài mới (xem web/src/lib/dispatchWorker.ts).
+# - schedule: mỗi giờ một lần để vét các bài sót, đồng thời giữ Supabase khỏi bị tạm dừng vì không hoạt động.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+# Chỉ một lượt chạy tại một thời điểm; lượt mới xếp hàng chờ lượt đang chạy xong.
+concurrency:
+  group: fluentia-worker
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+    steps:
+      # Kiểm tra nhẹ trước: không có bài chờ thì bỏ qua các bước nặng (cài đặt, tải model).
+      - name: Có bài đang chờ không?
+        id: check
+        run: |
+          body=$(curl -fsS "$SUPABASE_URL/rest/v1/lessons?select=id&status=in.(queued,processing)&limit=1" \
+            -H "apikey: $SUPABASE_SECRET_KEY")
+          if [ "$body" = "[]" ]; then echo "work=false" >> "$GITHUB_OUTPUT"; echo "Không có bài chờ."; else echo "work=true" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.work == 'true'
+
+      - uses: actions/setup-python@v5
+        if: steps.check.outputs.work == 'true'
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: worker/requirements.txt
+
+      - name: Cài ffmpeg
+        if: steps.check.outputs.work == 'true'
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+
+      - name: Cài thư viện Python
+        if: steps.check.outputs.work == 'true'
+        run: pip install -r worker/requirements.txt
+
+      # Model Whisper small (~500 MB) được giữ lại giữa các lần chạy.
+      - uses: actions/cache@v4
+        if: steps.check.outputs.work == 'true'
+        with:
+          path: ~/.cache/huggingface
+          key: whisper-small-v1
+
+      - name: Xử lý các bài đang chờ
+        if: steps.check.outputs.work == 'true'
+        working-directory: worker
+        run: python main.py --once

@@ -2,6 +2,7 @@
 
 Chạy: python main.py   (dừng bằng Ctrl+C)
       python main.py --check   (chỉ kiểm tra kết nối Supabase)
+      python main.py --once    (xử lý hết các bài đang chờ rồi thoát; dùng cho GitHub Actions)
 """
 import sys
 import tempfile
@@ -76,17 +77,20 @@ def process(db: Client, lesson: dict, work: Path) -> None:
     ).eq("id", lid).execute()
 
 
-def run() -> None:
+def run(once: bool = False) -> None:
     db = create_client(config.SUPABASE_URL, config.SUPABASE_SECRET_KEY)
     check_connection(db)
     # Bài đang xử lý dở từ lần chạy trước (worker bị tắt giữa chừng) thì xếp hàng lại.
     db.table("lessons").update({"status": "queued"}).eq("status", "processing").execute()
-    print("Worker đang chờ bài học mới. Ctrl+C để dừng.")
+    print("Xử lý các bài đang chờ rồi thoát." if once else "Worker đang chờ bài học mới. Ctrl+C để dừng.")
 
     while True:
         try:
             rows = db.table("lessons").select("*").eq("status", "queued").order("created_at").limit(1).execute().data
             if not rows:
+                if once:
+                    print("Không còn bài chờ.")
+                    return
                 time.sleep(POLL_SECONDS)
                 continue
             lesson = rows[0]
@@ -114,6 +118,6 @@ if __name__ == "__main__":
         if "--check" in sys.argv:
             check_connection(create_client(config.SUPABASE_URL, config.SUPABASE_SECRET_KEY))
         else:
-            run()
+            run(once="--once" in sys.argv)
     except KeyboardInterrupt:
         print("\nĐã dừng worker.")

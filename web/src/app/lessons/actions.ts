@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { readSettings } from "@/lib/lessonSettings";
+import { dispatchWorker } from "@/lib/dispatchWorker";
 import { generateSentences } from "@/lib/sentences";
 
 export type SentenceRow = { id?: string; text: string; start: number; end: number };
@@ -58,7 +59,15 @@ export async function retranscribe(lessonId: string) {
   if (del.error) throw new Error(del.error.message);
   const { error } = await supabase.from("lessons").update({ cues: null, status: "queued", error: null }).eq("id", lessonId);
   if (error) throw new Error(error.message);
+  await dispatchWorker();
   revalidatePath(`/lessons/${lessonId}`);
+}
+
+// Gọi sau khi tạo bài mới: báo GitHub Actions chạy worker ngay. Chỉ chạy khi người gọi thật sự có bài đang chờ.
+export async function triggerWorker() {
+  const supabase = await createClient();
+  const { data } = await supabase.from("lessons").select("id").eq("status", "queued").limit(1);
+  if (data?.length) await dispatchWorker();
 }
 
 // Xóa bài cùng file âm thanh và bản ghi âm trong Storage.

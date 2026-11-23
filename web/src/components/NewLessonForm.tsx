@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { triggerWorker } from "@/app/lessons/actions";
 import { posInt, type LessonSettings } from "@/lib/lessonSettings";
 import { createClient } from "@/lib/supabase/browser";
 
@@ -68,6 +69,7 @@ export function NewLessonForm() {
 
     const { error: err } = await supabase.from("lessons").insert(row);
     if (err) { setBusy(false); return setError(err.message); }
+    await triggerWorker().catch(() => {}); // lỗi thì thôi: workflow vẫn chạy theo lịch mỗi giờ
     router.push(`/lessons/${id}`);
   }
 
