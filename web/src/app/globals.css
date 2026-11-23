@@ -98,6 +98,8 @@ h2 { font-size: 1.25rem; }
 .sticky-bar {
   position: sticky; bottom: 0; z-index: 5; display: flex; gap: 0.5rem; align-items: center;
   padding: 0.75rem 0; background: var(--background); border-top: 1px solid var(--line);
+  /* Bù lề dưới của .page (3rem) để thanh luôn sát đáy màn hình, kể cả khi đã cuộn hết cỡ. */
+  margin-bottom: -3rem;
 }
 
 .progress { height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }

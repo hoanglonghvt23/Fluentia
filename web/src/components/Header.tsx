@@ -9,7 +9,7 @@ export async function Header() {
   const other = locale === "vi" ? "en" : "vi";
 
   return (
-    <header className="border-b border-[var(--line)]">
+    <header className="sticky top-0 z-30 border-b border-[var(--line)] bg-[var(--background)]">
       <div className="shell flex flex-wrap items-center gap-2 py-3">
         <Link href="/" className="mr-4 font-[family-name:var(--font-heading)] text-xl font-semibold">
           Fluteria<span className="text-[var(--accent)]">.</span>

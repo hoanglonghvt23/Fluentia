@@ -187,7 +187,7 @@ export function Shadowing({ lessonId, sentences, audioUrl, initialRecs }: { less
         </div>
       </section>
 
-      <aside className="card hidden max-h-[calc(100vh-8rem)] overflow-auto lg:sticky lg:top-4 lg:block">
+      <aside className="card hidden max-h-[calc(100vh-11rem)] overflow-auto lg:sticky lg:top-20 lg:block">
         <h2 className="mb-2 px-2">{tp("sentences")}</h2>
         <SentenceList texts={sentences.map((x) => x.text)} current={i} marks={marks} hideText={!showSubs} hiddenLabel={(n) => tp("sentenceN", { n })} onSelect={go} />
       </aside>
