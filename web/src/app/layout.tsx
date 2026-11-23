@@ -4,6 +4,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { DialogProvider } from "@/components/DialogProvider";
 import { Header } from "@/components/Header";
+import { LessonNotifications } from "@/components/LessonNotifications";
+import { StorageNotice } from "@/components/StorageNotice";
 import "./globals.css";
 
 // Be Vietnam Pro: thân chữ thân thiện, đủ dấu tiếng Việt. Fraunces: tiêu đề có nét mềm, ấm.
@@ -31,6 +33,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <NextIntlClientProvider>
           <DialogProvider>
             <Header />
+            <StorageNotice />
+            <LessonNotifications />
             {children}
           </DialogProvider>
         </NextIntlClientProvider>

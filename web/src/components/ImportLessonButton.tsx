@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
+import { useDialog } from "./DialogProvider";
 import { parseLessonZip } from "@/lib/lessonZip";
 import { createClient } from "@/lib/supabase/browser";
 
@@ -15,6 +16,7 @@ const CHUNK = 500;
 export function ImportLessonButton() {
   const t = useTranslations("home");
   const router = useRouter();
+  const { toast } = useDialog();
   const input = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -22,7 +24,10 @@ export function ImportLessonButton() {
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = ""; // cho phép chọn lại cùng một file
-    if (!file) return;
+    if (file) await importFile(file);
+  }
+
+  async function importFile(file: File) {
     setError("");
     if (file.size > MAX_ZIP_BYTES) return setError(t("importTooBig"));
 
@@ -101,6 +106,7 @@ export function ImportLessonButton() {
           }
         }
       }
+      toast(t("importDone", { title: lesson.title, sentences: lesson.sentences.length, attempts: lesson.attempts.length, recordings: lesson.recordings.length }), "ok");
       router.push(`/lessons/${id}`);
     } catch (err) {
       const m = err instanceof Error ? err.message : "";

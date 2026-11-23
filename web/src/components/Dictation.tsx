@@ -12,7 +12,7 @@ type Settings = { speed: number; repeats: number; pause: number };
 const DEFAULTS: Settings = { speed: 1, repeats: 2, pause: 1.5 };
 const KEY = "fluteria.dictation";
 const SUBS_KEY = "fluteria.dictation.subs";
-const SPEEDS = [0.75, 1, 1.25];
+const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 export function Dictation({ lessonId, sentences, audioUrl, startAt, showInput }: {
   lessonId: string; sentences: S[]; audioUrl: string; startAt: number; showInput: boolean;
@@ -120,17 +120,16 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt, showInput }:
               <button className="btn btn-lg" onClick={() => { cancel.current.v = true; setPlaying(false); }}>■ {t("stop")}</button>
             )}
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-2" role="group" aria-label={t("speed")}>
-            {SPEEDS.map((v) => (
-              <button key={v} className={`btn btn-sm ${settings.speed === v ? "btn-primary" : ""}`} onClick={() => change({ speed: v })}>{v}x</button>
-            ))}
-          </div>
-          <details className="w-full text-sm">
-            <summary className="muted cursor-pointer text-center">{t("settings")}</summary>
-            <div className="mt-3 flex flex-wrap justify-center gap-4">
-              <label className="flex flex-col gap-1">{t("speed")}: {settings.speed}x
-                <input type="range" min="0.5" max="1.5" step="0.05" value={settings.speed} onChange={(e) => change({ speed: Number(e.target.value) })} />
-              </label>
+          <div className="flex w-full flex-col items-center gap-3 border-t border-[var(--line)] pt-4 text-sm">
+            <div className="flex flex-col items-center gap-2">
+              <span className="muted">{t("speed")}</span>
+              <div className="flex flex-wrap items-center justify-center gap-2" role="group" aria-label={t("speed")}>
+                {SPEEDS.map((v) => (
+                  <button key={v} className={`btn btn-sm ${settings.speed === v ? "btn-primary" : ""}`} onClick={() => change({ speed: v })}>{v}x</button>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-wrap justify-center gap-4">
               <label className="flex flex-col gap-1">{t("repeats")}
                 <input type="number" min={1} max={10} value={settings.repeats} onChange={(e) => change({ repeats: Math.max(1, Number(e.target.value) || 1) })} className="field !w-24" />
               </label>
@@ -138,7 +137,7 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt, showInput }:
                 <input type="number" min={0} max={30} step={0.5} value={settings.pause} onChange={(e) => change({ pause: Math.max(0, Number(e.target.value) || 0) })} className="field !w-24" />
               </label>
             </div>
-          </details>
+          </div>
         </div>
 
         {withInput && (
@@ -179,11 +178,9 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt, showInput }:
 
         <div className="sticky-bar">
           <button className="btn" onClick={() => go(i - 1, false)} disabled={i === 0}>← {t("prev")}</button>
-          {withInput && !result ? (
-            <button className="btn btn-primary flex-1" onClick={check}>{t("check")}</button>
-          ) : (
-            <button className="btn btn-primary flex-1" onClick={() => go(i + 1, true)} disabled={last}>{t("next")} →</button>
-          )}
+          <button className="btn" onClick={() => go(i + 1, true)} disabled={last}>{t("next")} →</button>
+          {/* Tắt ô nhập hoặc đã kiểm tra rồi thì nút bị khóa (mờ đi), không đổi thành nút khác. */}
+          <button className="btn btn-primary flex-1" onClick={check} disabled={!withInput || !!result}>{t("check")}</button>
         </div>
       </section>
 

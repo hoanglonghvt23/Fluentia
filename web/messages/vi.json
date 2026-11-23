@@ -13,13 +13,27 @@
     "roleUser": "Người dùng"
   },
   "dialog": {
+    "close": "Đóng",
     "confirmTitle": "Xác nhận",
     "noticeTitle": "Thông báo",
     "confirm": "Đồng ý",
     "cancel": "Hủy",
     "ok": "OK"
   },
-  "login": {
+  "cleanup": {
+    "bannerTitle": "Dung lượng hệ thống sắp đầy",
+    "bannerBody": "Hãy tải {n, plural, other {# bài học}} về máy trước {date}. Sau hạn này, bạn sẽ phải tải toàn bộ bài về máy mới dùng tiếp được, và các bài đã tải sẽ bị xóa khỏi hệ thống.",
+    "downloadAll": "Tải {n, plural, other {# bài}} về máy",
+    "confirm": "Tải {n, plural, other {# bài học}} về máy? Mỗi bài là một file zip bắt đầu bằng \"Fluteria\" và sẽ bị xóa khỏi hệ thống sau khi tải xong.",
+    "overdueTitle": "Đã hết hạn: cần tải bài về máy",
+    "overdueBody": "Dung lượng hệ thống vẫn đầy. Bạn cần tải {n, plural, other {# bài học}} về máy. Mỗi bài là một file zip, và bài sẽ bị xóa khỏi hệ thống sau khi tải xong. Bạn có thể nhập lại bằng nút \"Nhập từ zip\".",
+    "multipleHint": "Nếu trình duyệt hỏi cho phép tải nhiều file, hãy chọn Cho phép.",
+    "running": "Đang tải...",
+    "progress": "Đã tải {done}/{total} bài",
+    "failed": "Không tải được bài \"{title}\". Bài này vẫn được giữ lại.",
+    "retry": "Thử lại"
+  },
+"login": {
     "title": "Đăng nhập",
     "username": "Tên đăng nhập",
     "password": "Mật khẩu",
@@ -35,6 +49,7 @@
     "hello": "Xin chào, {username}",
     "newLesson": "Bài mới",
     "import": "Nhập từ zip",
+    "importDone": "Đã nhập bài \"{title}\": {sentences} câu, {attempts} lượt Dictation, {recordings} bản ghi âm.",
     "importing": "Đang nhập...",
     "importInvalid": "File zip không hợp lệ. Hãy dùng file zip tải từ nút \"Tải zip\" của hệ thống.",
     "importTooBig": "File quá lớn (tối đa 50 MB).",

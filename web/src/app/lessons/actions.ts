@@ -61,7 +61,8 @@ export async function retranscribe(lessonId: string) {
   revalidatePath(`/lessons/${lessonId}`);
 }
 
-export async function deleteLesson(lessonId: string) {
+// Xóa bài cùng file âm thanh và bản ghi âm trong Storage.
+async function removeLesson(lessonId: string) {
   const supabase = await createClient();
   const { data: lesson } = await supabase
     .from("lessons").select("audio_path, source_path, subs_path").eq("id", lessonId).single();
@@ -72,5 +73,15 @@ export async function deleteLesson(lessonId: string) {
   if (paths.length) await supabase.storage.from("media").remove(paths);
   const { error } = await supabase.from("lessons").delete().eq("id", lessonId);
   if (error) throw new Error(error.message);
+}
+
+export async function deleteLesson(lessonId: string) {
+  await removeLesson(lessonId);
   redirect("/");
+}
+
+// Như deleteLesson nhưng không chuyển trang: dùng khi tải và xóa hàng loạt.
+export async function deleteLessonQuietly(lessonId: string) {
+  await removeLesson(lessonId);
+  revalidatePath("/", "layout");
 }

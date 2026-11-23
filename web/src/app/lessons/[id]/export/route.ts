@@ -1,6 +1,7 @@
 import { zipSync, strToU8 } from "fflate";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { zipFileName } from "@/lib/zipName";
 
 const pad = (n: number, w = 2) => String(n).padStart(w, "0");
 function srtTime(sec: number) {
@@ -8,7 +9,6 @@ function srtTime(sec: number) {
   return `${pad(Math.floor(ms / 3600000))}:${pad(Math.floor(ms / 60000) % 60)}:${pad(Math.floor(ms / 1000) % 60)},${pad(ms % 1000, 3)}`;
 }
 const csvCell = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
-const safeName = (s: string) => s.replace(/[\\/:*?"<>|\x00-\x1f]/g, "_").trim().slice(0, 80) || "lesson";
 
 // Tải bài học dạng zip. Dùng client của người dùng nên RLS chỉ cho tải bài của chính họ.
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -91,10 +91,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     { level: 6 },
   );
 
-  const name = safeName(lesson.title);
   return new NextResponse(new Blob([zip as BlobPart], { type: "application/zip" }), {
     headers: {
-      "Content-Disposition": `attachment; filename="lesson.zip"; filename*=UTF-8''${encodeURIComponent(name)}.zip`,
+      "Content-Disposition": `attachment; filename="Fluteria_lesson.zip"; filename*=UTF-8''${encodeURIComponent(zipFileName(lesson.title))}`,
       "Cache-Control": "no-store",
     },
   });

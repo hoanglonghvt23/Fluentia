@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { deleteLesson } from "@/app/lessons/actions";
+import { zipFileName } from "@/lib/zipName";
 import { useDialog } from "./DialogProvider";
 
 // Tải bài học dạng zip rồi XÓA bài khỏi hệ thống. Chỉ xóa sau khi trình duyệt đã nhận đủ file zip.
@@ -14,6 +15,7 @@ export function DownloadZipButton({ lessonId, title, variant }: { lessonId: stri
   async function onClick() {
     if (busy || !(await dialog.confirm(t("downloadConfirm"), { danger: true }))) return;
     setBusy(true);
+    const fileName = zipFileName(title);
     try {
       const res = await fetch(`/lessons/${lessonId}/export`);
       if (!res.ok) throw new Error(String(res.status));
@@ -23,7 +25,7 @@ export function DownloadZipButton({ lessonId, title, variant }: { lessonId: stri
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${title.replace(/[\\/:*?"<>|\x00-\x1f]/g, "_").trim().slice(0, 80) || "lesson"}.zip`;
+      a.download = fileName;
       document.body.appendChild(a);
       a.click();
       a.remove();
