@@ -26,3 +26,9 @@ tmp/
 temp/
 *.log
 Thumbs.db
+# Công cụ và kết quả sinh ra trên máy (không phải mã của dự án)
+.agents/
+.claude/skills/
+.taste-skill/
+skills-lock.json
+graphify-out/
