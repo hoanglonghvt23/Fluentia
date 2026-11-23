@@ -18,6 +18,10 @@
     "password": "Password",
     "submit": "Log in",
     "invalid": "Wrong username or password.",
+    "or": "or",
+    "google": "Log in with Google",
+    "googleDenied": "This Google email has not been allowed by an admin.",
+    "googleFailed": "Google login failed. Try again later.",
     "forgot": "Forgot your password? Ask an admin to reset it for you."
   },
   "home": {
@@ -145,6 +149,12 @@
     "users": "Accounts",
     "save": "Save",
     "hint": "Username: 3-20 characters, lowercase letters, digits, underscore. Password: at least 8 characters.",
+    "googleEmails": "Allowed Google emails",
+    "googleHint": "Someone with this email who logs in with Google gets an account automatically. Removing an email does not delete an existing account.",
+    "remove": "Remove",
+    "ok_email": "Email added.",
+    "ok_email_removed": "Email removed.",
+    "err_email": "Invalid email.",
     "ok_created": "Account created.",
     "ok_reset": "Password reset.",
     "err_username": "Invalid username.",

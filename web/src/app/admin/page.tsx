@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createUser, resetPassword } from "./actions";
+import { addAllowedEmail, createUser, removeAllowedEmail, resetPassword } from "./actions";
 
 export default async function AdminPage({ searchParams }: { searchParams: Promise<{ msg?: string }> }) {
   const me = await getCurrentUser();
@@ -11,6 +11,9 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const [t, { msg }] = await Promise.all([getTranslations("admin"), searchParams]);
   const { data: users } = await createAdminClient()
     .from("profiles").select("id, username, role").order("created_at");
+
+  const { data: allowed } = await createAdminClient()
+    .from("allowed_emails").select("email").order("created_at");
 
   const input = "field";
   const btn = "btn btn-primary";
@@ -33,6 +36,24 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         <button className={btn}>{t("save")}</button>
       </form>
       <p className="muted text-xs">{t("hint")}</p>
+
+      <h2 className="mb-3 mt-8">{t("googleEmails")}</h2>
+      <form action={addAllowedEmail} className="card mb-2 flex flex-col gap-3 sm:flex-row">
+        <input name="email" type="email" placeholder="name@gmail.com" required autoCapitalize="none" className={`${input} flex-1`} />
+        <button className={btn}>{t("save")}</button>
+      </form>
+      <p className="muted mb-3 text-xs">{t("googleHint")}</p>
+      <ul className="flex flex-col gap-2">
+        {allowed?.map((a) => (
+          <li key={a.email} className="card flex items-center justify-between gap-3">
+            <span className="break-all text-sm">{a.email}</span>
+            <form action={removeAllowedEmail}>
+              <input type="hidden" name="email" value={a.email} />
+              <button className="btn">{t("remove")}</button>
+            </form>
+          </li>
+        ))}
+      </ul>
       </section>
 
       <section>

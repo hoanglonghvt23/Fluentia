@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { normalizeUsername, usernameToEmail } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -19,6 +19,17 @@ export async function signIn(formData: FormData) {
     password: String(formData.get("password") ?? ""),
   });
   redirect(error ? "/login?error=invalid" : "/");
+}
+
+export async function signInWithGoogle() {
+  const supabase = await createClient();
+  const h = await headers();
+  const origin = h.get("origin") ?? `${h.get("x-forwarded-proto") ?? "http"}://${h.get("host")}`;
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: `${origin}/auth/callback` },
+  });
+  redirect(error || !data.url ? "/login?error=google" : data.url);
 }
 
 export async function signOut() {

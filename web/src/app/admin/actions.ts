@@ -25,6 +25,21 @@ export async function createUser(formData: FormData) {
   redirect(`/admin?msg=${error ? (error.code === "email_exists" ? "err_exists" : "err_failed") : "ok_created"}`);
 }
 
+export async function addAllowedEmail(formData: FormData) {
+  await requireAdmin();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) redirect("/admin?msg=err_email");
+  const { error } = await createAdminClient().from("allowed_emails").upsert({ email });
+  redirect(`/admin?msg=${error ? "err_failed" : "ok_email"}`);
+}
+
+export async function removeAllowedEmail(formData: FormData) {
+  await requireAdmin();
+  const email = String(formData.get("email") ?? "");
+  const { error } = await createAdminClient().from("allowed_emails").delete().eq("email", email);
+  redirect(`/admin?msg=${error ? "err_failed" : "ok_email_removed"}`);
+}
+
 export async function resetPassword(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id") ?? "");

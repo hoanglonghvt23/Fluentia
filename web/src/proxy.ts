@@ -21,6 +21,7 @@ export async function proxy(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const onLogin = request.nextUrl.pathname === "/login";
 
+  if (request.nextUrl.pathname.startsWith("/auth/")) return response; // callback Google
   if (!user && !onLogin) return NextResponse.redirect(new URL("/login", request.url));
   if (user && onLogin) return NextResponse.redirect(new URL("/", request.url));
   return response;
