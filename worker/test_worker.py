@@ -47,6 +47,17 @@ def test_fill_gaps():
     print("fill_gaps OK")
 
 
+def test_has_gap():
+    from types import SimpleNamespace as W
+
+    dense = [W(word=" a", start=0.5, end=1.0), W(word=" b", start=1.2, end=1.6)]
+    assert not media.has_gap(dense)  # đầu bài 0.5 giây, giữa 0.2 giây: không cần lượt phụ
+    assert media.has_gap([W(word=" a", start=6.0, end=6.5)])  # đầu bài trống 6 giây
+    assert media.has_gap([W(word=" a", start=0.0, end=1.0), W(word=" b", start=9.0, end=9.5)])  # giữa bài trống 8 giây
+    assert media.has_gap([])  # lượt chính không ra gì: vẫn phải thử lượt phụ
+    print("has_gap OK")
+
+
 def test_media(with_whisper: bool):
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
@@ -72,4 +83,5 @@ if __name__ == "__main__":
     test_parse()
     test_words_to_cues()
     test_fill_gaps()
+    test_has_gap()
     test_media(with_whisper="--whisper" in sys.argv)

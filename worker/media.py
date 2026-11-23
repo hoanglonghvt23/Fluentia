@@ -1,4 +1,5 @@
 """Xử lý media: tách âm thanh (ffmpeg), tải YouTube (yt-dlp), nhận dạng giọng nói (Whisper)."""
+import os
 import subprocess
 from pathlib import Path
 
@@ -44,7 +45,22 @@ def words_to_cues(words, max_words: int = 14, max_gap: float = 0.5) -> list[dict
     return cues
 
 
-def fill_gaps(main: list, fill: list, min_gap: float = 4.0) -> list:
+GAP_SECONDS = 4.0  # khoảng trống từ mức này trở lên mới cần vá bằng lượt phụ
+
+
+def _gap_edges(words: list) -> list:
+    """Các khoảng giữa từ (kể cả từ đầu bài tính từ giây 0): [(điểm bắt đầu hoặc None, điểm kết thúc)]."""
+    return [(None, words[0].start)] + [(a.end, b.start) for a, b in zip(words, words[1:])]
+
+
+def has_gap(main: list, min_gap: float = GAP_SECONDS) -> bool:
+    """Lượt chính có khoảng trống đủ dài để cần lượt phụ không? Không có thì lượt phụ chắc chắn không thêm từ nào."""
+    if not main:
+        return True
+    return any(hi - (lo if lo is not None else 0.0) >= min_gap for lo, hi in _gap_edges(main))
+
+
+def fill_gaps(main: list, fill: list, min_gap: float = GAP_SECONDS) -> list:
     """Vá lượt nhận dạng chính bằng từ của lượt phụ, chỉ ở những khoảng trống dài (>= min_gap giây).
 
     Lượt chính hay bỏ sót đoạn đầu có nhạc nền; lượt phụ (VAD nhẹ) nghe được nhưng kém chính xác ở chỗ khác,
@@ -52,9 +68,8 @@ def fill_gaps(main: list, fill: list, min_gap: float = 4.0) -> list:
     """
     if not main:
         return list(fill)
-    edges = [(None, main[0].start)] + [(a.end, b.start) for a, b in zip(main, main[1:])]
     out = list(main)
-    for lo, hi in edges:
+    for lo, hi in _gap_edges(main):
         if hi - (lo if lo is not None else 0.0) >= min_gap:
             lo = 0.0 if lo is None else lo
             out += [w for w in fill if w.start >= lo - 0.1 and w.end <= hi + 0.1]
@@ -64,7 +79,9 @@ def fill_gaps(main: list, fill: list, min_gap: float = 4.0) -> list:
 def _run(audio: Path, **options) -> list:
     """Một lượt Whisper, trả về danh sách từ có mốc giờ. Bỏ đoạn mà Whisper tự chấm là nhiễu (hay ra chữ 'You')."""
     segments, _ = _model.transcribe(
-        str(audio), language="en", word_timestamps=True, condition_on_previous_text=False, **options
+        str(audio), language="en", word_timestamps=True, condition_on_previous_text=False,
+        beam_size=1,  # giải mã tham lam: nhanh hơn khoảng một nửa so với mặc định (5), chỉ kém chính xác chút ít
+        **options,
     )
     return [
         w for s in segments
@@ -83,8 +100,11 @@ def transcribe(audio: Path) -> list[dict]:
     if _model is None:
         from faster_whisper import WhisperModel
 
-        _model = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8")
+        # Dùng hết số nhân CPU của máy (mặc định chỉ 4 luồng).
+        _model = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8", cpu_threads=os.cpu_count() or 4)
     main = _run(audio, vad_filter=False, no_speech_threshold=None, log_prob_threshold=None)
+    if not has_gap(main):
+        return words_to_cues(main)  # không có khoảng trống cần vá: bỏ lượt phụ, kết quả y hệt mà nhanh gần gấp đôi
     fill = _run(
         audio, vad_filter=True,
         vad_parameters={"threshold": 0.25, "min_silence_duration_ms": 1500, "speech_pad_ms": 500},
