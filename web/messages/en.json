@@ -12,6 +12,13 @@
     "roleAdmin": "Administrator",
     "roleUser": "User"
   },
+  "dialog": {
+    "confirmTitle": "Confirm",
+    "noticeTitle": "Notice",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "ok": "OK"
+  },
   "login": {
     "title": "Log in",
     "username": "Username",
@@ -27,6 +34,10 @@
   "home": {
     "hello": "Hello, {username}",
     "newLesson": "New lesson",
+    "import": "Import from zip",
+    "importing": "Importing...",
+    "importInvalid": "Invalid zip file. Use a zip downloaded with this app's \"Download zip\" button.",
+    "importTooBig": "File too large (50 MB max).",
     "empty": "No lessons yet. Click \"New lesson\" to start.",
     "status": {
       "queued": "Waiting",
@@ -70,6 +81,10 @@
     "queued": "Waiting for the worker. Start the worker on the computer.",
     "processing": "The worker is processing this lesson; it may take a few minutes.",
     "failed": "Processing failed",
+    "download": "Download zip",
+    "downloadConfirm": "Downloading the zip will DELETE this lesson from the system (the zip includes history and Shadowing recordings). You can re-import it with \"Import from zip\". Continue?",
+    "downloadFailed": "Could not download the zip. The lesson was not deleted.",
+    "downloading": "Downloading...",
     "delete": "Delete lesson",
     "retranscribe": "Re-transcribe",
     "retranscribeConfirm": "Re-transcribing deletes the current sentences and rebuilds them. The worker must be running. Continue?",

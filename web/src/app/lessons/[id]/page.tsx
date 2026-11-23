@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { AutoRefresh } from "@/components/AutoRefresh";
+import { DownloadZipButton } from "@/components/DownloadZipButton";
 import { LessonActions } from "@/components/LessonActions";
 import { SentenceEditor } from "@/components/SentenceEditor";
 import { readSettings } from "@/lib/lessonSettings";
@@ -58,7 +59,12 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
       {waiting && <AutoRefresh />}
       <div className="mb-4 flex items-start justify-between gap-3">
         <h1>{lesson.title}</h1>
-        <LessonActions lessonId={id} canRetranscribe={!!lesson.audio_path && !waiting} />
+        <div className="flex flex-wrap items-center gap-2">
+          {lesson.status === "ready" && (
+            <DownloadZipButton lessonId={id} title={lesson.title} variant="text" />
+          )}
+          <LessonActions lessonId={id} canRetranscribe={!!lesson.audio_path && !waiting} />
+        </div>
       </div>
       {body}
     </main>

@@ -12,6 +12,13 @@
     "roleAdmin": "Quản trị viên",
     "roleUser": "Người dùng"
   },
+  "dialog": {
+    "confirmTitle": "Xác nhận",
+    "noticeTitle": "Thông báo",
+    "confirm": "Đồng ý",
+    "cancel": "Hủy",
+    "ok": "OK"
+  },
   "login": {
     "title": "Đăng nhập",
     "username": "Tên đăng nhập",
@@ -27,6 +34,10 @@
   "home": {
     "hello": "Xin chào, {username}",
     "newLesson": "Bài mới",
+    "import": "Nhập từ zip",
+    "importing": "Đang nhập...",
+    "importInvalid": "File zip không hợp lệ. Hãy dùng file zip tải từ nút \"Tải zip\" của hệ thống.",
+    "importTooBig": "File quá lớn (tối đa 50 MB).",
     "empty": "Chưa có bài học nào. Bấm \"Bài mới\" để bắt đầu.",
     "status": {
       "queued": "Đang chờ xử lý",
@@ -70,6 +81,10 @@
     "queued": "Bài đang chờ worker xử lý. Hãy bật worker trên máy tính.",
     "processing": "Worker đang xử lý bài này, có thể mất vài phút.",
     "failed": "Xử lý thất bại",
+    "download": "Tải zip",
+    "downloadConfirm": "Tải zip sẽ XÓA bài này khỏi hệ thống (file zip có kèm lịch sử và bản ghi âm Shadowing). Bạn có thể nhập lại bằng nút \"Nhập từ zip\". Tiếp tục?",
+    "downloadFailed": "Không tải được file zip. Bài chưa bị xóa.",
+    "downloading": "Đang tải...",
     "delete": "Xóa bài",
     "retranscribe": "Nhận dạng lại",
     "retranscribeConfirm": "Nhận dạng lại giọng nói sẽ xóa các câu hiện tại và tạo lại từ đầu. Worker phải đang chạy. Tiếp tục?",

@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { playSegment } from "@/lib/audio";
 import { createClient } from "@/lib/supabase/browser";
+import { useDialog } from "./DialogProvider";
 import { SentenceList } from "./SentenceList";
 
 const SUBS_KEY = "fluteria.shadowing.subs";
@@ -20,6 +21,7 @@ function pickMime() {
 export function Shadowing({ lessonId, sentences, audioUrl, initialRecs }: { lessonId: string; sentences: S[]; audioUrl: string; initialRecs: Rec[] }) {
   const t = useTranslations("shadowing");
   const tp = useTranslations("practice");
+  const dialog = useDialog();
   const [i, setI] = useState(0);
   const [recs, setRecs] = useState(initialRecs);
   const [recording, setRecording] = useState(false);
@@ -98,7 +100,7 @@ export function Shadowing({ lessonId, sentences, audioUrl, initialRecs }: { less
   };
 
   const removeRec = async (r: Rec) => {
-    if (!confirm(t("deleteConfirm"))) return;
+    if (!(await dialog.confirm(t("deleteConfirm"), { danger: true }))) return;
     const supabase = createClient();
     await supabase.storage.from("media").remove([r.path]);
     await supabase.from("recordings").delete().eq("id", r.id);

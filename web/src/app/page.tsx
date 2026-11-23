@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { AutoRefresh } from "@/components/AutoRefresh";
+import { DownloadZipButton } from "@/components/DownloadZipButton";
+import { ImportLessonButton } from "@/components/ImportLessonButton";
 import { getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
@@ -19,20 +21,26 @@ export default async function Home() {
       {busy && <AutoRefresh />}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h1>{t("hello", { username: me.username })}</h1>
-        <Link href="/lessons/new" className="btn btn-primary"><span aria-hidden className="text-xl leading-none">+</span> {t("newLesson")}</Link>
+        <div className="flex flex-wrap items-start gap-2">
+          <ImportLessonButton />
+          <Link href="/lessons/new" className="btn btn-primary"><span aria-hidden className="text-xl leading-none">+</span> {t("newLesson")}</Link>
+        </div>
       </div>
       {!lessons?.length ? (
         <p className="muted">{t("empty")}</p>
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <ul className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {lessons.map((l) => (
-            <li key={l.id}>
-              <Link href={`/lessons/${l.id}`} className="card card-link flex items-center justify-between gap-3">
-                <span className="font-medium">{l.title}</span>
+            <li key={l.id} className="relative">
+              <Link href={`/lessons/${l.id}`} className={`card card-link flex h-full flex-col items-start gap-2 ${l.status === "ready" ? "pr-14" : ""}`}>
+                <span className="line-clamp-2 break-words font-medium">{l.title}</span>
                 <span className={`chip ${l.status === "ready" ? "chip-ready" : l.status === "error" ? "chip-error" : ""}`}>
                   {t(`status.${l.status}`)}
                 </span>
               </Link>
+              {l.status === "ready" && (
+                <DownloadZipButton lessonId={l.id} title={l.title} variant="icon" />
+              )}
             </li>
           ))}
         </ul>

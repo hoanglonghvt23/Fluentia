@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Fraunces } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
+import { DialogProvider } from "@/components/DialogProvider";
 import { Header } from "@/components/Header";
 import "./globals.css";
 
@@ -28,8 +29,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html lang={locale} className={`${body.variable} ${heading.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider>
-          <Header />
-          {children}
+          <DialogProvider>
+            <Header />
+            {children}
+          </DialogProvider>
         </NextIntlClientProvider>
       </body>
     </html>

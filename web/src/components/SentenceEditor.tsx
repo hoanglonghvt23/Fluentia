@@ -4,12 +4,14 @@ import { useTranslations } from "next-intl";
 import { useRef, useState, useTransition } from "react";
 import { playSegment } from "@/lib/audio";
 import type { LessonSettings } from "@/lib/lessonSettings";
+import { useDialog } from "./DialogProvider";
 import { regenerateSentences, saveSentences, type SentenceRow } from "@/app/lessons/actions";
 
 type Row = SentenceRow & { key: string };
 
 export function SentenceEditor({ lessonId, initial, audioUrl, settings }: { lessonId: string; initial: SentenceRow[]; audioUrl: string; settings: LessonSettings }) {
   const t = useTranslations("editor");
+  const dialog = useDialog();
   const [rows, setRows] = useState<Row[]>(() => initial.map((r) => ({ ...r, key: r.id ?? crypto.randomUUID() })));
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
@@ -40,7 +42,7 @@ export function SentenceEditor({ lessonId, initial, audioUrl, settings }: { less
     const el = document.getElementById(`t-${rows[i].key}`) as HTMLTextAreaElement | null;
     const r = rows[i];
     const pos = el?.selectionStart ?? 0;
-    if (pos <= 0 || pos >= r.text.length) return alert(t("splitHint"));
+    if (pos <= 0 || pos >= r.text.length) return void dialog.alert(t("splitHint"));
     const mid = r.start + ((r.end - r.start) * pos) / r.text.length;
     const left = { ...r, text: r.text.slice(0, pos).trim(), end: mid };
     const right = { key: crypto.randomUUID(), text: r.text.slice(pos).trim(), start: mid, end: r.end };
@@ -58,8 +60,13 @@ export function SentenceEditor({ lessonId, initial, audioUrl, settings }: { less
       <details className="card mb-4 text-sm">
         <summary className="cursor-pointer font-medium">{t("options")}</summary>
         <form
-          action={(fd) => start(() => regenerateSentences(lessonId, fd).then(() => location.reload()))}
-          onSubmit={(e) => { if (!confirm(t("regenConfirm"))) e.preventDefault(); }}
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.currentTarget);
+            if (await dialog.confirm(t("regenConfirm"), { danger: true })) {
+              start(() => regenerateSentences(lessonId, fd).then(() => location.reload()));
+            }
+          }}
           className="mt-3 flex flex-wrap items-end gap-3"
         >
           <label className="flex flex-col gap-1">{t("maxSentences")}
