@@ -45,7 +45,9 @@ jobs:
 
       - name: Cài ffmpeg
         if: steps.check.outputs.work == 'true'
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+        run: |
+          # Máy chủ GitHub có thể đã có sẵn ffmpeg; chỉ cài khi thiếu (bỏ qua cả apt-get update).
+          if command -v ffmpeg >/dev/null; then ffmpeg -version | head -1; else sudo apt-get install -y --no-install-recommends ffmpeg || { sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg; }; fi
 
       - name: Cài thư viện Python
         if: steps.check.outputs.work == 'true'
