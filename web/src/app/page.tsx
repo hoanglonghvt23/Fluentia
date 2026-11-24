@@ -30,16 +30,16 @@ export default async function Home() {
       {!lessons?.length ? (
         <p className="muted">{t("empty")}</p>
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <ul className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {lessons.map((l) => (
             <li key={l.id} className="relative">
-              <Link href={`/lessons/${l.id}`} className={`card card-link flex h-full flex-col items-start gap-2 pr-14`}>
+              <Link href={`/lessons/${l.id}`} className={`card card-link flex h-full flex-col items-start gap-2 pb-16`}>
                 <span className="line-clamp-2 break-words font-medium">{l.title}</span>
                 <span className={`chip ${l.status === "ready" ? "chip-ready" : l.status === "error" ? "chip-error" : ""}`}>
                   {t(`status.${l.status}`)}
                 </span>
               </Link>
-              <div className="absolute right-3 top-1/2 flex -translate-y-1/2 flex-col gap-2">
+              <div className="absolute bottom-3 right-3 flex gap-2">
                 {l.status === "ready" && <DownloadZipButton lessonId={l.id} title={l.title} variant="icon" />}
                 <DeleteLessonButton lessonId={l.id} />
               </div>
