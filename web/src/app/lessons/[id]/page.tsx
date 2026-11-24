@@ -20,6 +20,7 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
 
   const waiting = lesson.status === "queued" || lesson.status === "processing";
   let body: React.ReactNode;
+  let missing = false; // bài đã xong nhưng chưa thấy câu (các lần làm mới chồng nhau): tiếp tục làm mới
 
   if (lesson.status === "ready") {
     const load = () => supabase.from("sentences").select("id, text, start_sec, end_sec").eq("lesson_id", id).order("idx");
@@ -28,6 +29,7 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
       await generateSentences(supabase, id); // lần đầu mở bài: tách câu tự động từ phụ đề
       ({ data: sentences } = await load());
     }
+    missing = !sentences?.length && !!lesson.cues?.length;
     const { data: signed } = await supabase.storage.from("media").createSignedUrl(lesson.audio_path, 3 * 3600);
     body = (
       <>
@@ -42,6 +44,7 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
           </Link>
         </div>
         <SentenceEditor
+          key={(sentences ?? []).map((x) => x.id).join(",")} // dữ liệu đổi thì dựng lại, vì SentenceEditor chỉ đọc `initial` một lần
           lessonId={id}
           settings={readSettings(lesson.settings)}
           audioUrl={signed?.signedUrl ?? ""}
@@ -59,7 +62,7 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
 
   return (
     <main className="page">
-      {waiting && <AutoRefresh />}
+      {(waiting || missing) && <AutoRefresh seconds={waiting ? 4 : 2} />}
       <div className="mb-4 flex items-start justify-between gap-3">
         <h1>{lesson.title}</h1>
         <div className="flex flex-wrap items-center gap-2">
