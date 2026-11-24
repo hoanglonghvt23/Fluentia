@@ -113,7 +113,8 @@
     "retranscribeConfirm": "Re-transcribing deletes the current sentences and rebuilds them. The worker must be running. Continue?",
     "dictationDesc": "Listen to each sentence and type what you hear.",
     "shadowingDesc": "Hear the original, record your voice and play it back.",
-    "deleteConfirm": "Delete this lesson with all its history and recordings?"
+    "deleteConfirm": "Delete this lesson with all its history and recordings?",
+    "deleteFailed": "Could not delete the lesson. Please try again."
   },
   "practice": {
     "sentences": "Sentences",

@@ -113,7 +113,8 @@
     "retranscribeConfirm": "Nhận dạng lại giọng nói sẽ xóa các câu hiện tại và tạo lại từ đầu. Worker phải đang chạy. Tiếp tục?",
     "dictationDesc": "Nghe từng câu rồi gõ lại những gì bạn nghe được.",
     "shadowingDesc": "Nghe câu gốc, ghi âm giọng bạn và nghe lại.",
-    "deleteConfirm": "Xóa bài học này cùng toàn bộ lịch sử và bản ghi âm?"
+    "deleteConfirm": "Xóa bài học này cùng toàn bộ lịch sử và bản ghi âm?",
+    "deleteFailed": "Không xóa được bài. Vui lòng thử lại."
   },
   "practice": {
     "sentences": "Danh sách câu",

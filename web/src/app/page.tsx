@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { AutoRefresh } from "@/components/AutoRefresh";
+import { DeleteLessonButton } from "@/components/DeleteLessonButton";
 import { DownloadZipButton } from "@/components/DownloadZipButton";
 import { ImportLessonButton } from "@/components/ImportLessonButton";
 import { getCurrentUser } from "@/lib/auth";
@@ -32,15 +33,16 @@ export default async function Home() {
         <ul className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {lessons.map((l) => (
             <li key={l.id} className="relative">
-              <Link href={`/lessons/${l.id}`} className={`card card-link flex h-full flex-col items-start gap-2 ${l.status === "ready" ? "pr-14" : ""}`}>
+              <Link href={`/lessons/${l.id}`} className={`card card-link flex h-full flex-col items-start gap-2 pr-14`}>
                 <span className="line-clamp-2 break-words font-medium">{l.title}</span>
                 <span className={`chip ${l.status === "ready" ? "chip-ready" : l.status === "error" ? "chip-error" : ""}`}>
                   {t(`status.${l.status}`)}
                 </span>
               </Link>
-              {l.status === "ready" && (
-                <DownloadZipButton lessonId={l.id} title={l.title} variant="icon" />
-              )}
+              <div className="absolute right-3 top-1/2 flex -translate-y-1/2 flex-col gap-2">
+                {l.status === "ready" && <DownloadZipButton lessonId={l.id} title={l.title} variant="icon" />}
+                <DeleteLessonButton lessonId={l.id} />
+              </div>
             </li>
           ))}
         </ul>
