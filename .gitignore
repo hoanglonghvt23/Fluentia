@@ -32,3 +32,6 @@ Thumbs.db
 .taste-skill/
 skills-lock.json
 graphify-out/
+
+# Hướng dẫn riêng cho Claude Code, không công khai
+CLAUDE.md

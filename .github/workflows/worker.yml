@@ -23,6 +23,7 @@ jobs:
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+      PYTHONUNBUFFERED: "1" # in log ngay, nếu không Python gom vào bộ đệm và log trông như đứng yên
     steps:
       # Kiểm tra nhẹ trước: không có bài chờ thì bỏ qua các bước nặng (cài đặt, tải model).
       - name: Có bài đang chờ không?
