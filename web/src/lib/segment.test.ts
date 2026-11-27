@@ -34,12 +34,29 @@ test("văn bản không dấu câu bị cắt theo maxChars", () => {
   assert.ok(s.every((x) => x.text.length <= 50));
 });
 
-test("khoảng lặng dài giữa hai cue ngắt câu dù chưa có dấu chấm", () => {
+test("phụ đề có dấu câu: khoảng lặng giữa hai cue không cắt câu giữa chừng", () => {
   const s = segment([
     { start: 8, end: 9.6, text: "On the" },
     { start: 21, end: 26, text: "nature called I went to the camp." },
   ]);
-  assert.deepEqual(s.map((x) => x.text), ["On the", "nature called I went to the camp."]);
+  assert.deepEqual(s.map((x) => x.text), ["On the nature called I went to the camp."]);
+});
+
+test("câu kết thúc ở dấu chấm dù khoảng lặng nằm trước chữ cuối của câu", () => {
+  const s = segment([
+    { start: 37.76, end: 42.24, text: "Listen and see if your day is the" },
+    { start: 43.32, end: 48.05, text: "same. Talking about daily life." },
+  ]);
+  assert.deepEqual(s.map((x) => x.text), ["Listen and see if your day is the same.", "Talking about daily life."]);
+  assert.ok(s[0].end < s[1].start, "chỗ nghỉ sau dấu chấm nằm giữa hai câu");
+});
+
+test("phụ đề không dấu câu: khoảng lặng dài vẫn ngắt câu", () => {
+  const s = segment([
+    { start: 8, end: 9.6, text: "On the nature called I went to the" },
+    { start: 21, end: 26, text: "camp and then I came back home" },
+  ]);
+  assert.equal(s.length, 2);
   assert.equal(s[1].start, 21);
 });
 

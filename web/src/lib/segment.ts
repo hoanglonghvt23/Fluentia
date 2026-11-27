@@ -17,7 +17,11 @@ const SOFT_GAP = 0.5; // nghỉ nhẹ giữa hai cue (lời hát, thoại không
 const SOFT_MIN = 25; // ...nhưng chỉ khi câu đang dở đã đủ dài, để không vụn thành 2-3 chữ
 const MERGE_GAP = 3; // câu ngắn chỉ được gộp với câu sau nếu cách nhau không quá ngần này giây
 
-// Mỗi cue chia thành từ, thời gian nội suy theo số ký tự. Từ đầu mỗi cue mang khoảng nghỉ trước nó.
+const PAUSE_END = 6; // trọng số nghỉ sau chữ kết thúc câu (tính theo ký tự), để chữ cuối câu không bị kéo dài sang chỗ nghỉ
+const PAUSE_CLAUSE = 3; // nghỉ sau dấu phẩy, chấm phẩy, hai chấm
+
+// Mỗi cue chia thành từ, thời gian nội suy theo số ký tự cộng thêm chỗ nghỉ sau dấu câu: chữ cuối câu kết thúc
+// trước khoảng nghỉ và câu kế bắt đầu sau nó. Từ đầu mỗi cue mang khoảng nghỉ trước nó.
 function tokenize(cues: Cue[]): Token[] {
   const out: Token[] = [];
   let prevEnd = -Infinity;
@@ -25,13 +29,15 @@ function tokenize(cues: Cue[]): Token[] {
     const gapBefore = out.length ? cue.start - prevEnd : 0;
     prevEnd = cue.end;
     const words = cue.text.replace(/<[^>]*>/g, " ").replace(/[♪♫]/g, " ").split(/\s+/).filter(Boolean);
-    const total = words.reduce((n, w) => n + w.length + 1, 0);
+    const pause = (w: string, last: boolean) => (last ? 0 : endsSentence(w) ? PAUSE_END : CLAUSE.test(w) ? PAUSE_CLAUSE : 0);
+    const total = words.reduce((n, w, k) => n + w.length + 1 + pause(w, k === words.length - 1), 0);
     let pos = 0;
-    for (const w of words) {
+    words.forEach((w, k) => {
       const s = cue.start + ((cue.end - cue.start) * pos) / total;
-      pos += w.length + 1;
-      out.push({ text: w, start: s, end: cue.start + ((cue.end - cue.start) * pos) / total, gapBefore: pos === w.length + 1 ? gapBefore : 0 });
-    }
+      const e = cue.start + ((cue.end - cue.start) * (pos + w.length + 1)) / total;
+      pos += w.length + 1 + pause(w, k === words.length - 1);
+      out.push({ text: w, start: s, end: e, gapBefore: k === 0 ? gapBefore : 0 });
+    });
   }
   return out;
 }
@@ -60,13 +66,17 @@ export function limitSentences(
 }
 
 export function segment(cues: Cue[], { maxChars = 140, minChars = 0 }: SegmentOptions = {}): Sentence[] {
+  const tokens = tokenize(cues);
+  // Phụ đề đã có dấu câu thì câu chỉ kết thúc ở dấu chấm/hỏi/chấm than, không ngắt giữa chừng vì khoảng lặng.
+  // Chỉ khi phụ đề gần như không có dấu câu (lời hát) mới dùng khoảng lặng để chia.
+  const punctuated = tokens.filter((t) => endsSentence(t.text)).length * 80 >= tokens.length;
   const groups: Token[][] = [];
   let cur: Token[] = [];
   let len = 0;
 
-  for (const tok of tokenize(cues)) {
+  for (const tok of tokens) {
     const gap = tok.gapBefore ?? 0;
-    if (cur.length && (gap > MAX_GAP || (gap >= SOFT_GAP && len >= SOFT_MIN))) {
+    if (!punctuated && cur.length && (gap > MAX_GAP || (gap >= SOFT_GAP && len >= SOFT_MIN))) {
       groups.push(cur);
       cur = [];
       len = 0;
