@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro, Fraunces } from "next/font/google";
+import { Be_Vietnam_Pro, Fraunces, Inter, Lora, Nunito } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { DialogProvider } from "@/components/DialogProvider";
 import { Header } from "@/components/Header";
 import { LessonNotifications } from "@/components/LessonNotifications";
 import { StorageNotice } from "@/components/StorageNotice";
+import { themeInitScript } from "@/lib/theme";
 import "./globals.css";
 
 // Be Vietnam Pro: thân chữ thân thiện, đủ dấu tiếng Việt. Fraunces: tiêu đề có nét mềm, ấm.
@@ -20,6 +21,11 @@ const heading = Fraunces({
   subsets: ["latin", "latin-ext", "vietnamese"],
 });
 
+// Các phông tùy chọn (miễn phí, đủ dấu tiếng Việt). preload tắt để chỉ tải khi người dùng thật sự chọn.
+const inter = Inter({ variable: "--font-inter", subsets: ["latin", "latin-ext", "vietnamese"], preload: false });
+const nunito = Nunito({ variable: "--font-nunito", subsets: ["latin", "latin-ext", "vietnamese"], preload: false });
+const lora = Lora({ variable: "--font-lora", subsets: ["latin", "latin-ext", "vietnamese"], preload: false });
+
 export const metadata: Metadata = {
   title: "Fluentia",
   description: "Luyện tiếng Anh: Dictation và Shadowing",
@@ -28,7 +34,10 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const locale = await getLocale();
   return (
-    <html lang={locale} className={`${body.variable} ${heading.variable} h-full antialiased`}>
+    <html lang={locale} suppressHydrationWarning className={`${body.variable} ${heading.variable} ${inter.variable} ${nunito.variable} ${lora.variable} h-full antialiased`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider>
           <DialogProvider>

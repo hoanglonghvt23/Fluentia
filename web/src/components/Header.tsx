@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { setLocale } from "@/app/actions";
 import { getCurrentUser } from "@/lib/auth";
+import { ThemeMenu } from "./ThemeMenu";
 import { UserMenu } from "./UserMenu";
 
 export async function Header() {
@@ -21,6 +22,7 @@ export async function Header() {
           <input type="hidden" name="locale" value={other} />
           <button className="btn btn-sm" aria-label={other === "en" ? "English" : "Tiếng Việt"}>{other.toUpperCase()}</button>
         </form>
+        <ThemeMenu />
         {me && (
           <UserMenu
             username={me.username}

@@ -12,6 +12,19 @@
     "roleAdmin": "Administrator",
     "roleUser": "User"
   },
+  "theme": {
+    "title": "Appearance",
+    "background": "Background color",
+    "buttons": "Button color",
+    "font": "Font",
+    "reset": "Reset to default",
+    "fonts": {
+      "default": "Default",
+      "inter": "Inter",
+      "nunito": "Nunito",
+      "lora": "Lora (serif)"
+    }
+  },
   "dialog": {
     "close": "Close",
     "confirmTitle": "Confirm",

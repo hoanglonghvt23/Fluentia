@@ -12,6 +12,19 @@
     "roleAdmin": "Quản trị viên",
     "roleUser": "Người dùng"
   },
+  "theme": {
+    "title": "Giao diện",
+    "background": "Màu nền",
+    "buttons": "Màu nút",
+    "font": "Phông chữ",
+    "reset": "Khôi phục mặc định",
+    "fonts": {
+      "default": "Mặc định",
+      "inter": "Inter",
+      "nunito": "Nunito",
+      "lora": "Lora (chữ có chân)"
+    }
+  },
   "dialog": {
     "close": "Đóng",
     "confirmTitle": "Xác nhận",
