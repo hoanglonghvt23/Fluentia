@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { AutoRefresh } from "@/components/AutoRefresh";
+import { ElapsedTimer } from "@/components/ElapsedTimer";
 import { DownloadZipButton } from "@/components/DownloadZipButton";
 import { LessonActions } from "@/components/LessonActions";
 import { SentenceEditor } from "@/components/SentenceEditor";
@@ -57,7 +58,12 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
       ? <p className="msg-err">{t("youtubeBlocked")}</p>
       : <p className="msg-err">{t("failed")}: {lesson.error}</p>;
   } else {
-    body = <p className="muted">{t(lesson.status === "queued" ? "queued" : "processing")}</p>;
+    body = (
+      <>
+        <p className="muted">{t(lesson.status === "queued" ? "queued" : "processing")}</p>
+        <ElapsedTimer since={lesson.created_at} />
+      </>
+    );
   }
 
   return (

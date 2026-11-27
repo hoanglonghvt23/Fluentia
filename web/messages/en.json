@@ -103,6 +103,7 @@
     "shadowing": "Shadowing",
     "queued": "Waiting for the worker. Start the worker on the computer.",
     "processing": "The worker is processing this lesson; it may take a few minutes.",
+    "elapsed": "Elapsed: {time}",
     "failed": "Processing failed",
     "download": "Download zip",
     "downloadConfirm": "Downloading the zip will DELETE this lesson from the system (the zip includes history and Shadowing recordings). You can re-import it with \"Import from zip\". Continue?",

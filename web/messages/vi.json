@@ -103,6 +103,7 @@
     "shadowing": "Shadowing (nhại theo)",
     "queued": "Bài đang chờ worker xử lý. Hãy bật worker trên máy tính.",
     "processing": "Worker đang xử lý bài này, có thể mất vài phút.",
+    "elapsed": "Đã trôi qua: {time}",
     "failed": "Xử lý thất bại",
     "download": "Tải zip",
     "downloadConfirm": "Tải zip sẽ XÓA bài này khỏi hệ thống (file zip có kèm lịch sử và bản ghi âm Shadowing). Bạn có thể nhập lại bằng nút \"Nhập từ zip\". Tiếp tục?",
