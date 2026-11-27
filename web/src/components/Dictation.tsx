@@ -12,6 +12,7 @@ type Settings = { speed: number; repeats: number; pause: number };
 const DEFAULTS: Settings = { speed: 1, repeats: 2, pause: 1.5 };
 const KEY = "fluteria.dictation";
 const SUBS_KEY = "fluteria.dictation.subs";
+const AUTO_KEY = "fluteria.dictation.auto";
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 export function Dictation({ lessonId, sentences, audioUrl, startAt, showInput }: {
@@ -27,6 +28,8 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt, showInput }:
   const [playing, setPlaying] = useState(false);
   const [withInput, setWithInput] = useState(showInput); // bật/tắt ô nhập khi đang luyện
   const [showSubs, setShowSubs] = useState(!showInput); // có ô nhập thì ẩn phụ đề (tránh lộ đáp án), không có thì hiện
+  const [autoNext, setAutoNext] = useState(!showInput); // đọc xong tự sang câu sau; có ô nhập thì mặc định tắt để khỏi mất câu đang gõ
+  const onDone = useRef<() => void>(() => {});
   const audio = useRef<HTMLAudioElement>(null);
   const cancel = useRef({ v: false });
   const s = sentences[i];
@@ -39,6 +42,8 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt, showInput }:
       if (raw) setSettings({ ...DEFAULTS, ...JSON.parse(raw) });
       const subs = localStorage.getItem(SUBS_KEY);
       if (subs) setShowSubs(subs === "1");
+      const auto = localStorage.getItem(AUTO_KEY);
+      if (auto) setAutoNext(auto === "1");
     } catch {}
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
@@ -50,6 +55,11 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt, showInput }:
   const toggleSubs = () => {
     setShowSubs(!showSubs);
     try { localStorage.setItem(SUBS_KEY, showSubs ? "0" : "1"); } catch {}
+  };
+
+  const toggleAuto = () => {
+    setAutoNext(!autoNext);
+    try { localStorage.setItem(AUTO_KEY, autoNext ? "0" : "1"); } catch {}
   };
 
   // Phát câu hiện tại `repeats` lần, nghỉ `pause` giây giữa các lần.
@@ -64,7 +74,10 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt, showInput }:
       if (token.v || !audio.current) break;
       await playSegment(audio.current, sent.start, sent.end, cfg.speed, token);
     }
-    if (!token.v) setPlaying(false);
+    if (!token.v) {
+      setPlaying(false);
+      onDone.current(); // đọc xong hết số lần lặp (không bị dừng giữa chừng)
+    }
   }, []);
 
   useEffect(() => () => { cancel.current.v = true; }, []);
@@ -90,6 +103,9 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt, showInput }:
   };
 
   const last = i === sentences.length - 1;
+  useEffect(() => {
+    onDone.current = () => { if (autoNext && !last) go(i + 1, true); };
+  });
   if (!s) return <p>{t("empty")}</p>;
   const toggle = (on: boolean) => `btn btn-sm ${on ? "btn-primary" : ""}`;
 
@@ -106,13 +122,18 @@ export function Dictation({ lessonId, sentences, audioUrl, startAt, showInput }:
           <div className="flex gap-2" role="group">
             <button className={toggle(withInput)} aria-pressed={withInput} onClick={() => setWithInput(!withInput)}>{t("inputToggle")}</button>
             <button className={toggle(showSubs)} aria-pressed={showSubs} onClick={toggleSubs}>{t("subsToggle")}</button>
+            <button className={toggle(autoNext)} aria-pressed={autoNext} onClick={toggleAuto}>{t("autoNext")}</button>
           </div>
         </div>
 
         <div className="card flex flex-col items-center gap-4 py-6">
-          {showSubs && (
-            <p className="max-w-3xl text-center font-[family-name:var(--font-heading)] text-2xl leading-relaxed">{s.text}</p>
-          )}
+          {/* Ẩn phụ đề: mỗi chữ thành dấu chấm tròn như ô mật khẩu, giữ nguyên khoảng trắng nên vẫn thấy số chữ. */}
+          <p
+            className="max-w-3xl break-words text-center font-[family-name:var(--font-heading)] text-2xl leading-relaxed"
+            aria-label={showSubs ? undefined : t("subsHidden")}
+          >
+            {showSubs ? s.text : s.text.replace(/\S/g, "•")}
+          </p>
           <div className="flex flex-wrap items-center justify-center gap-2">
             {!playing ? (
               <button className="btn btn-primary btn-lg" onClick={() => play(s, settings)}>▶ {t("play")}</button>

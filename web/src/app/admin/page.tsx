@@ -9,11 +9,24 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   if (me?.role !== "admin") redirect("/");
 
   const [t, { msg }] = await Promise.all([getTranslations("admin"), searchParams]);
-  const { data: users } = await createAdminClient()
-    .from("profiles").select("id, username, role").order("created_at");
-
-  const { data: allowed } = await createAdminClient()
-    .from("allowed_emails").select("email").order("created_at");
+  // Thiếu biến môi trường (thường là SUPABASE_SECRET_KEY trên Vercel) hoặc thiếu bảng thì báo rõ thay vì làm sập cả trang.
+  let admin: ReturnType<typeof createAdminClient>;
+  try {
+    admin = createAdminClient();
+  } catch (e) {
+    return (
+      <main className="page">
+        <h1 className="mb-4">{t("title")}</h1>
+        <p className="msg-err">{t("loadFailed")}</p>
+        <p className="muted mt-2 text-sm">{e instanceof Error ? e.message : String(e)}</p>
+      </main>
+    );
+  }
+  const [{ data: users, error: usersErr }, { data: allowed, error: allowedErr }] = await Promise.all([
+    admin.from("profiles").select("id, username, role").order("created_at"),
+    admin.from("allowed_emails").select("email").order("created_at"),
+  ]);
+  const loadError = usersErr?.message ?? allowedErr?.message;
 
   const input = "field";
   const btn = "btn btn-primary";
@@ -21,6 +34,12 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   return (
     <main className="page">
       <h1 className="mb-4">{t("title")}</h1>
+      {loadError && (
+        <div className="mb-4">
+          <p className="msg-err">{t("loadFailed")}</p>
+          <p className="muted mt-1 text-sm">{loadError}</p>
+        </div>
+      )}
       {msg && (
         <p className={`mb-4 text-sm ${msg.startsWith("ok") ? "msg-ok" : "msg-err"}`}>
           {t.has(msg) ? t(msg) : ""}

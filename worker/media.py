@@ -10,7 +10,9 @@ _model = None
 def extract_audio(src: Path, out: Path) -> float:
     """Tách âm thanh thành mp3 mono 64 kbps (nhẹ, đủ cho giọng nói). Trả về thời lượng (giây)."""
     subprocess.run(
-        ["ffmpeg", "-y", "-i", str(src), "-vn", "-ac", "1", "-b:a", "64k", str(out)],
+        ["ffmpeg", "-y", "-i", str(src), "-vn", "-ac", "1",
+         # Nếu âm thanh bắt đầu trễ so với hình thì chèn im lặng ở đầu, để mốc giờ trong file mp3 khớp mốc giờ phụ đề.
+         "-af", "aresample=async=1:first_pts=0", "-b:a", "64k", str(out)],
         check=True, capture_output=True,
     )
     probe = subprocess.run(

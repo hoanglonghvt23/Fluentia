@@ -140,6 +140,8 @@
   "dictation": {
     "inputToggle": "Input box",
     "subsToggle": "Subtitles",
+    "autoNext": "Auto next",
+    "subsHidden": "Subtitles hidden",
     "title": "Dictation",
     "settings": "Playback settings",
     "speed": "Speed",
@@ -199,6 +201,7 @@
     "err_username": "Invalid username.",
     "err_password": "Password too short (minimum 8 characters).",
     "err_exists": "Username already exists.",
-    "err_failed": "Action failed. Try again later."
+    "err_failed": "Action failed. Try again later.",
+    "loadFailed": "Could not load admin data. Check SUPABASE_SECRET_KEY on Vercel and that all migration files have been run."
   }
 }

@@ -140,6 +140,8 @@
   "dictation": {
     "inputToggle": "Ô nhập",
     "subsToggle": "Phụ đề",
+    "autoNext": "Tự chuyển câu",
+    "subsHidden": "Phụ đề đang ẩn",
     "title": "Dictation",
     "settings": "Cài đặt phát",
     "speed": "Tốc độ",
@@ -199,6 +201,7 @@
     "err_username": "Tên đăng nhập không hợp lệ.",
     "err_password": "Mật khẩu quá ngắn (tối thiểu 8 ký tự).",
     "err_exists": "Tên đăng nhập đã tồn tại.",
-    "err_failed": "Thao tác thất bại. Thử lại sau."
+    "err_failed": "Thao tác thất bại. Thử lại sau.",
+    "loadFailed": "Không tải được dữ liệu quản trị. Kiểm tra SUPABASE_SECRET_KEY trên Vercel và đã chạy đủ các file migration chưa."
   }
 }
