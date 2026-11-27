@@ -108,6 +108,11 @@ export function NewLessonForm() {
               <span className="muted text-xs">{t("youtubeHint")}</span>
             </label>
           )}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+            <span className="muted">{t("getTitle")}</span>
+            <a href="https://youtubetoolkit.com/tools/video-downloader-1080p" target="_blank" rel="noopener noreferrer" className="underline decoration-[var(--accent)] underline-offset-2">{t("getVideo")} ↗</a>
+            <a href="https://tubetranscript.com/vi" target="_blank" rel="noopener noreferrer" className="underline decoration-[var(--accent)] underline-offset-2">{t("getSubs")} ↗</a>
+          </div>
         </section>
 
         <section className="card flex flex-col gap-5">

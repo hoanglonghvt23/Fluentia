@@ -15,7 +15,7 @@ node_modules/
 dist/
 build/
 
-# Python (worker)
+# Python (backend)
 __pycache__/
 *.pyc
 .venv/

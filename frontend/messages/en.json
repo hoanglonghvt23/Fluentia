@@ -20,9 +20,9 @@
     "reset": "Reset to default",
     "fonts": {
       "default": "Default",
-      "inter": "Inter",
-      "nunito": "Nunito",
-      "lora": "Lora (serif)"
+      "times": "Times New Roman",
+      "arial": "Arial",
+      "calibri": "Calibri"
     }
   },
   "dialog": {
@@ -108,7 +108,10 @@
     "errLimits": "Sentences and words must be positive whole numbers, or empty.",
     "errNoFile": "Choose a video or audio file.",
     "errTooBig": "File too large (max 50 MB).",
-    "errUrl": "Invalid YouTube link."
+    "errUrl": "Invalid YouTube link.",
+    "getTitle": "Download from a YouTube link:",
+    "getVideo": "Download video (1080p)",
+    "getSubs": "Download subtitles"
   },
   "lesson": {
     "youtubeBlocked": "Could not download the video from YouTube because YouTube is blocking the processing server. Download the video to your computer and recreate this lesson with the \"Upload file\" tab.",
@@ -187,7 +190,8 @@
     "prev": "Previous",
     "next": "Next",
     "empty": "This lesson has no sentences.",
-    "errMic": "Cannot use the microphone. Allow microphone access (HTTPS required) and try again."
+    "errMic": "Cannot use the microphone. Allow microphone access (HTTPS required) and try again.",
+    "subsHidden": "Subtitles hidden"
   },
   "progress": {
     "title": "Progress and history",

@@ -1,7 +1,7 @@
 // Giao diện tùy chỉnh: màu nền, màu nút và phông chữ. Lưu ở trình duyệt (localStorage), áp dụng bằng biến CSS.
 export type Theme = { bg?: string; accent?: string; font?: string };
 export const THEME_KEY = "fluteria.theme";
-export const FONT_IDS = ["default", "inter", "nunito", "lora"] as const;
+export const FONT_IDS = ["default", "times", "arial", "calibri"] as const;
 
 // Hàm này được nhúng nguyên văn vào <script> chạy trước khi vẽ trang (tránh nháy màu), nên phải tự đủ:
 // không dùng biến hay hàm bên ngoài, không dùng spread.
@@ -42,10 +42,15 @@ export function themeToVars(theme: { bg?: string; accent?: string; font?: string
     out["--accent-ink"] = lum(a) > 0.4 ? "#1b1714" : "#ffffff";
     out["--accent-soft"] = mix(base, a, 0.18);
   }
-  const fonts: Record<string, string> = { inter: "--font-inter", nunito: "--font-nunito", lora: "--font-lora" };
+  // Phông có sẵn trong máy (không tải từ mạng). Calibri chỉ có trên máy cài Office/Windows, nơi khác dùng phông tương tự.
+  const fonts: Record<string, string> = {
+    times: '"Times New Roman", Times, "Liberation Serif", serif',
+    arial: "Arial, Helvetica, \"Liberation Sans\", sans-serif",
+    calibri: "Calibri, Carlito, \"Segoe UI\", sans-serif",
+  };
   if (theme.font && fonts[theme.font]) {
-    out["--font-body"] = "var(" + fonts[theme.font] + ")";
-    out["--font-heading"] = "var(" + fonts[theme.font] + ")";
+    out["--font-body"] = fonts[theme.font];
+    out["--font-heading"] = fonts[theme.font];
   }
   return out;
 }

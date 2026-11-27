@@ -7,14 +7,14 @@ Web luyện tiếng Anh từ video với hai tính năng: Dictation (nghe chép 
 
 ## Cấu trúc
 
-- `web/`: Next.js, chạy trên Vercel. Cấu hình: `web/.env.example`.
-- `worker/`: Python (yt-dlp, ffmpeg, faster-whisper), chạy trên GitHub Actions hoặc máy cá nhân. Xem `worker/README.md`.
+- `frontend/`: Next.js, chạy trên Vercel. Cấu hình: `frontend/.env.example`.
+- `backend/`: Python (models/services/controllers) (yt-dlp, ffmpeg, faster-whisper), chạy trên GitHub Actions hoặc máy cá nhân. Xem `backend/README.md`.
 - `supabase/migrations/`: các file SQL tạo bảng, chạy tay theo thứ tự trong SQL Editor của Supabase.
 
 ## Chạy web trên máy
 
 ```powershell
-cd web
+cd frontend
 npm install
 copy .env.example .env.local   # rồi điền giá trị
 npm run dev                    # mở http://localhost:3000

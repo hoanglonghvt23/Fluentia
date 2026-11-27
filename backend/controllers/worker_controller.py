@@ -1,32 +1,20 @@
-"""Worker Fluentia: lấy bài học đang chờ từ Supabase, tách âm thanh, lấy phụ đề (hoặc Whisper), ghi kết quả.
-
-Chạy: python main.py   (dừng bằng Ctrl+C)
-      python main.py --check   (chỉ kiểm tra kết nối Supabase)
-      python main.py --once    (xử lý hết các bài đang chờ rồi thoát; dùng cho GitHub Actions)
-"""
-import sys
+"""Controller: điều phối việc xử lý một bài học (Model lấy/ghi dữ liệu, Service làm việc nặng) và vòng lặp nhận việc."""
 import tempfile
 import time
 import traceback
 from pathlib import Path
 
-from supabase import Client, create_client
+from supabase import Client
 
-import config
-import media
-import subtitles
+from models.lesson_model import LessonModel
+from models.storage_model import MAX_UPLOAD, StorageModel
+from services import media_service as media
+from services import subtitle_service as subtitles
 
-BUCKET = "media"
 POLL_SECONDS = 5
-MAX_UPLOAD = 50 * 1024 * 1024  # giới hạn file của Supabase gói Free
 
 
-def check_connection(db: Client) -> None:
-    print(f"Kết nối Supabase OK. Số bucket Storage hiện có: {len(db.storage.list_buckets())}")
-
-
-def process(db: Client, lesson: dict, work: Path) -> None:
-    store = db.storage.from_(BUCKET)
+def process(lessons: LessonModel, store: StorageModel, lesson: dict, work: Path) -> None:
     owner, lid = lesson["owner"], lesson["id"]
     update: dict = {}
     subs_file: Path | None = None
@@ -38,7 +26,7 @@ def process(db: Client, lesson: dict, work: Path) -> None:
         cues = media.transcribe(audio)
         if not cues:
             raise RuntimeError("Không nhận ra lời nói trong file này.")
-        db.table("lessons").update({"cues": cues, "status": "ready", "error": None}).eq("id", lid).execute()
+        lessons.mark_ready(lid, {"cues": cues})
         return
 
     if lesson["source_type"] == "youtube":
@@ -71,53 +59,40 @@ def process(db: Client, lesson: dict, work: Path) -> None:
     old = [p for p in (lesson.get("source_path"), lesson.get("subs_path")) if p]
     if old:
         store.remove(old)
-    db.table("lessons").update(
-        {**update, "audio_path": audio_path, "cues": cues, "source_path": None, "subs_path": None,
-         "status": "ready", "error": None}
-    ).eq("id", lid).execute()
+    lessons.mark_ready(lid, {**update, "audio_path": audio_path, "cues": cues, "source_path": None, "subs_path": None})
 
 
-def run(once: bool = False) -> None:
-    db = create_client(config.SUPABASE_URL, config.SUPABASE_SECRET_KEY)
+def check_connection(db: Client) -> None:
+    print(f"Kết nối Supabase OK. Số bucket Storage hiện có: {StorageModel(db).count_buckets()}")
+
+
+def run(db: Client, once: bool = False) -> None:
+    lessons, store = LessonModel(db), StorageModel(db)
     check_connection(db)
-    # Bài đang xử lý dở từ lần chạy trước (worker bị tắt giữa chừng) thì xếp hàng lại.
-    db.table("lessons").update({"status": "queued"}).eq("status", "processing").execute()
+    lessons.requeue_stuck()
     print("Xử lý các bài đang chờ rồi thoát." if once else "Worker đang chờ bài học mới. Ctrl+C để dừng.")
 
     while True:
         try:
-            rows = db.table("lessons").select("*").eq("status", "queued").order("created_at").limit(1).execute().data
-            if not rows:
+            lesson = lessons.next_queued()
+            if not lesson:
                 if once:
                     print("Không còn bài chờ.")
                     return
                 time.sleep(POLL_SECONDS)
                 continue
-            lesson = rows[0]
-            # Nhận việc: chỉ một worker thắng nếu chạy nhiều bản.
-            claimed = db.table("lessons").update({"status": "processing"}).eq("id", lesson["id"]).eq("status", "queued").execute()
-            if not claimed.data:
+            if not lessons.claim(lesson["id"]):
                 continue
             print(f"Xử lý: {lesson['title']}")
             try:
                 with tempfile.TemporaryDirectory() as tmp:
-                    process(db, lesson, Path(tmp))
+                    process(lessons, store, lesson, Path(tmp))
                 print("  Xong.")
             except Exception as e:  # noqa: BLE001 - ghi lỗi vào bài học để người dùng thấy
                 traceback.print_exc()
-                db.table("lessons").update({"status": "error", "error": str(e)[:500]}).eq("id", lesson["id"]).execute()
+                lessons.mark_error(lesson["id"], str(e))
         except KeyboardInterrupt:
             raise
         except Exception:  # lỗi mạng tạm thời: thử lại sau
             traceback.print_exc()
             time.sleep(POLL_SECONDS * 2)
-
-
-if __name__ == "__main__":
-    try:
-        if "--check" in sys.argv:
-            check_connection(create_client(config.SUPABASE_URL, config.SUPABASE_SECRET_KEY))
-        else:
-            run(once="--once" in sys.argv)
-    except KeyboardInterrupt:
-        print("\nĐã dừng worker.")

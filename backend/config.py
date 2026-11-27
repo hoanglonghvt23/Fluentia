@@ -1,4 +1,4 @@
-"""Đọc cấu hình worker từ biến môi trường (file worker/.env)."""
+"""Đọc cấu hình worker từ biến môi trường (file backend/.env)."""
 import os
 import sys
 from pathlib import Path
@@ -20,7 +20,7 @@ load_dotenv(Path(__file__).with_name(".env"))
 def require(name: str) -> str:
     value = os.environ.get(name, "").strip()
     if not value:
-        raise SystemExit(f"Thiếu biến môi trường {name}. Xem worker/.env.example.")
+        raise SystemExit(f"Thiếu biến môi trường {name}. Xem backend/.env.example.")
     return value
 
 

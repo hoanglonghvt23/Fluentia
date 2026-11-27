@@ -4,8 +4,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-import media
-import subtitles
+from services import media_service as media
+from services import subtitle_service as subtitles
 
 SRT = "﻿1\r\n00:00:01,000 --> 00:00:03,500\r\nHello <i>there</i>.\r\n\r\n2\r\n00:01:02,250 --> 00:01:04,000\r\nHow are you?\r\nI am fine &amp; happy.\r\n"
 VTT = "WEBVTT\n\n00:01.000 --> 00:03.500 align:start\nHello there.\n\n01:00:00.000 --> 01:00:01.000\nOne hour.\n"

@@ -20,9 +20,9 @@
     "reset": "Khôi phục mặc định",
     "fonts": {
       "default": "Mặc định",
-      "inter": "Inter",
-      "nunito": "Nunito",
-      "lora": "Lora (chữ có chân)"
+      "times": "Times New Roman",
+      "arial": "Arial",
+      "calibri": "Calibri"
     }
   },
   "dialog": {
@@ -108,7 +108,10 @@
     "errLimits": "Số câu và số chữ phải là số nguyên dương, hoặc để trống.",
     "errNoFile": "Hãy chọn một file video hoặc âm thanh.",
     "errTooBig": "File quá lớn (tối đa 50 MB).",
-    "errUrl": "Link YouTube không hợp lệ."
+    "errUrl": "Link YouTube không hợp lệ.",
+    "getTitle": "Tải từ link YouTube:",
+    "getVideo": "Tải video (1080p)",
+    "getSubs": "Tải phụ đề"
   },
   "lesson": {
     "youtubeBlocked": "Không tải được video từ YouTube vì YouTube đang chặn máy chủ xử lý. Hãy tải video về máy rồi dùng tab \"Tải file lên\" để tạo lại bài này.",
@@ -187,7 +190,8 @@
     "prev": "Câu trước",
     "next": "Câu sau",
     "empty": "Bài này chưa có câu nào.",
-    "errMic": "Không dùng được micro. Hãy cho phép micro (cần HTTPS) rồi thử lại."
+    "errMic": "Không dùng được micro. Hãy cho phép micro (cần HTTPS) rồi thử lại.",
+    "subsHidden": "Phụ đề đang ẩn"
   },
   "progress": {
     "title": "Tiến độ và lịch sử",

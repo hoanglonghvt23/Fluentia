@@ -16,7 +16,8 @@ test("màu nút sáng dùng chữ tối, màu nút tối dùng chữ trắng", (
 test("giá trị sai hoặc rỗng bị bỏ qua, phông mặc định không ghi đè", () => {
   assert.deepEqual(themeToVars({}), {});
   assert.deepEqual(themeToVars({ bg: "red", accent: "#12", font: "default" }), {});
-  assert.equal(themeToVars({ font: "lora" })["--font-body"], "var(--font-lora)");
+  assert.match(themeToVars({ font: "times" })["--font-body"], /^"Times New Roman"/);
+  assert.deepEqual(themeToVars({ font: "inter" }), {}); // phông cũ không còn thì bỏ qua
 });
 
 test("readTheme chịu được dữ liệu hỏng", () => {
@@ -27,11 +28,11 @@ test("readTheme chịu được dữ liệu hỏng", () => {
 test("script khởi tạo tự đủ và chạy được", () => {
   const style: Record<string, string> = {};
   const g = globalThis as Record<string, unknown>;
-  g.localStorage = { getItem: () => JSON.stringify({ bg: "#202020", accent: "#ff8800", font: "inter" }) };
+  g.localStorage = { getItem: () => JSON.stringify({ bg: "#202020", accent: "#ff8800", font: "arial" }) };
   g.document = { documentElement: { style: { setProperty: (k: string, v: string) => { style[k] = v; } } } };
   new Function(themeInitScript)();
   assert.equal(style["--background"], "#202020");
   assert.equal(style["--accent"], "#ff8800");
-  assert.equal(style["--font-body"], "var(--font-inter)");
+  assert.match(style["--font-body"], /^Arial/);
   delete g.localStorage; delete g.document;
 });

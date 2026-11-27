@@ -134,7 +134,13 @@ export function Shadowing({ lessonId, sentences, audioUrl, initialRecs }: { less
           <button className={`btn btn-sm ${showSubs ? "btn-primary" : ""}`} aria-pressed={showSubs} onClick={toggleSubs}>{t("subsToggle")}</button>
         </div>
 
-        {showSubs && <p className="card font-[family-name:var(--font-heading)] text-2xl leading-relaxed">{s.text}</p>}
+        {/* Ẩn phụ đề: mỗi chữ thành dấu chấm tròn như ô mật khẩu, giữ nguyên khoảng trắng. */}
+        <p
+          className="card break-words font-[family-name:var(--font-heading)] text-2xl leading-relaxed"
+          aria-label={showSubs ? undefined : t("subsHidden")}
+        >
+          {showSubs ? s.text : s.text.replace(/\S/g, "•")}
+        </p>
 
         <div className="flex flex-wrap gap-3">
           <button className="btn btn-primary btn-lg flex-1" onClick={playOriginal}>▶ {t("playOriginal")}</button>
